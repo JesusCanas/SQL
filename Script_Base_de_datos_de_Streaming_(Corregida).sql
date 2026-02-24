@@ -346,20 +346,59 @@ SELECT * FROM reseña;
 -- 1.3 Múltiple. Insertar varios registros a la vez
 -- ------------------------------------------------------
 INSERT INTO contrata (codigo_productora) SELECT codigo FROM productora;
+-- -------------------------------------------------------------
+-- 1.4: INSERT con Valores Calculados (funciones) (stephano)
+-- -------------------------------------------------------------
+INSERT INTO reseña (codigo_perfil, id_contenido, fecha, puntuacion, comentario)
+VALUES (2, 103, CURDATE(),
+ ROUND(7.6), 
+ UPPER('muy buena serie')
+ );
+-- CURDATE pone la fecha actual, ROUND redondea el decimal y UPPER hace que todo el texto de la reseña sea mayúscula
 -- ------------------------------------------------------
 -- 2.1 UPDATE Simple. Actualizar un solo registro
 -- ------------------------------------------------------
 UPDATE reseña SET puntuacion = 9 WHERE comentario = 'Muy entretenida'; -- Usando columna comentario al no haber una PK 
 -- ------------------------------------------------------
+-- 2.2: UPDATE con Cálculo (stephano)
+-- ------------------------------------------------------
+UPDATE reseña
+SET puntuacion = puntuacion + 1
+WHERE puntuacion < 9;
+-- ------------------------------------------------------
 -- 3.1 DELETE Simple. Elimiinar un registro específico
 -- ------------------------------------------------------
 INSERT INTO usuario VALUES ('00000000A', NULL, NULL, NULL, NULL);
 DELETE FROM usuario WHERE DNI = '00000000A';
+-- ------------------------------------------------------
+-- 3.2: DELETE con Subconsulta (stephano)
+-- ------------------------------------------------------
+DELETE FROM reseña
+WHERE id_contenido IN (
+    SELECT id_contenido
+    FROM contenido
+    WHERE tipo = 'Película'
+);
 -- ------------------------------------------------------------------------------------
 -- 3.5 DELETE en Cascada Simulado. Eliminar registros respetando integridad referencial
 -- ------------------------------------------------------------------------------------
 DELETE FROM reseña WHERE codigo_perfil = 1;
 DELETE FROM perfil WHERE codigo_perfil = 1;
+-- ------------------------------------------------------------------------------------
+-- 4.1: Transacción Completa. : Operación atómica con múltiples DML (stephano)
+-- ------------------------------------------------------------------------------------
+START TRANSACTION;
+-- 1. Insertamos un nuevo usuario
+INSERT INTO usuario VALUES 
+('55555555Z', 'Mario', 'Torres', 'mario@gmail.com', '600999888', 'Premium');
+-- 2. Creamos el perfil para el usuario
+INSERT INTO perfil VALUES
+(5, 'MarioMain', '55555555Z');
+-- 3. Registramos su compra
+INSERT INTO compra VALUES
+(100, 1, 5);
+-- Comiteamos los cambios
+COMMIT;
 
 -- -----------------------------------------------------
 -- 1.2 INSERT con Subconsulta. Usar SELECT dentro de INSERT (miguel)
@@ -401,37 +440,9 @@ JOIN compra c ON p.codigo_perfil = c.codigo_perfil
 JOIN metodo_de_pago m ON c.codigo_pago = m.codigo_pago
 WHERE m.tipo_pago = 'PayPal';
 
--- 1.4: INSERT con Valores Calculados (funciones) (stephano)
-INSERT INTO reseña (codigo_perfil, id_contenido, fecha, puntuacion, comentario)
-VALUES (2, 103, CURDATE(),
- ROUND(7.6), 
- UPPER('muy buena serie')
- );
--- CURDATE pone la fecha actual, ROUND redondea el decimal y UPPER hace que todo el texto de la reseña sea mayúscula
 
--- 2.2: UPDATE con Cálculo (stephano)
-UPDATE reseña
-SET puntuacion = puntuacion + 1
-WHERE puntuacion < 9;
 
--- 3.2: DELETE con Subconsulta (stephano)
-DELETE FROM reseña
-WHERE id_contenido IN (
-    SELECT id_contenido
-    FROM contenido
-    WHERE tipo = 'Película'
-);
 
--- 4.1: Transacción Completa. : Operación atómica con múltiples DML (stephano)
-START TRANSACTION;
--- 1. Insertamos un nuevo usuario
-INSERT INTO usuario VALUES 
-('55555555Z', 'Mario', 'Torres', 'mario@gmail.com', '600999888', 'Premium');
--- 2. Creamos el perfil para el usuario
-INSERT INTO perfil VALUES
-(5, 'MarioMain', '55555555Z');
--- 3. Registramos su compra
-INSERT INTO compra VALUES
-(100, 1, 5);
--- Comiteamos los cambios
-COMMIT;
+
+
+
