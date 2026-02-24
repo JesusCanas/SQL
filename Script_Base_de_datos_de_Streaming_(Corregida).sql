@@ -400,3 +400,38 @@ JOIN perfil p ON u.DNI = p.DNI_usuario
 JOIN compra c ON p.codigo_perfil = c.codigo_perfil
 JOIN metodo_de_pago m ON c.codigo_pago = m.codigo_pago
 WHERE m.tipo_pago = 'PayPal';
+
+-- 1.4: INSERT con Valores Calculados (funciones) (stephano)
+INSERT INTO reseña (codigo_perfil, id_contenido, fecha, puntuacion, comentario)
+VALUES (2, 103, CURDATE(),
+ ROUND(7.6), 
+ UPPER('muy buena serie')
+ );
+-- CURDATE pone la fecha actual, ROUND redondea el decimal y UPPER hace que todo el texto de la reseña sea mayúscula
+
+-- 2.2: UPDATE con Cálculo (stephano)
+UPDATE reseña
+SET puntuacion = puntuacion + 1
+WHERE puntuacion < 9;
+
+-- 3.2: DELETE con Subconsulta (stephano)
+DELETE FROM reseña
+WHERE id_contenido IN (
+    SELECT id_contenido
+    FROM contenido
+    WHERE tipo = 'Película'
+);
+
+-- 4.1: Transacción Completa. : Operación atómica con múltiples DML (stephano)
+START TRANSACTION;
+-- 1. Insertamos un nuevo usuario
+INSERT INTO usuario VALUES 
+('55555555Z', 'Mario', 'Torres', 'mario@gmail.com', '600999888', 'Premium');
+-- 2. Creamos el perfil para el usuario
+INSERT INTO perfil VALUES
+(5, 'MarioMain', '55555555Z');
+-- 3. Registramos su compra
+INSERT INTO compra VALUES
+(100, 1, 5);
+-- Comiteamos los cambios
+COMMIT;
