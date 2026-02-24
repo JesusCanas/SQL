@@ -24,7 +24,7 @@ menos, una de sentencia de cada tipo. Indica en el script a que apartado de los 
 - 3.4: DELETE Condicional con lógica compleja (miguel)
 - 3.5: DELETE en Cascada Simulado. Eliminar registros respetando integridad referencial (aron)
 - 4.1: Transacción Completa. : Operación atómica con múltiples DML (stephano)
-Consejos:
+### Consejos:
 - Verifica integridad referencial: Antes de eliminar, comprueba las relaciones
 - Antes de ejecutar DELETE/UPDATE: Haz siempre un SELECT primero para verificar qué registros
 afectarás
