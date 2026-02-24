@@ -1,12 +1,4 @@
 # SQL
-ASE - Tratamiento de datos
-Objetivo: En esta fase se trabajará el RA4 (Modifica la información almacenada en la base de datos
-utilizando asistentes, herramientas gráficas y el lenguaje de manipulación de datos. )
-Alcance tarea: Realización de las tareas que se indican a continuación utilizando la base de datos
-relacional diseñada previamente.
-- Crea un script que inserte datos en todas las tablas del modelo manteniendo la integridad
-referencial. Para practicar todas las opciones de inserción, modificación y borrado debes crear, al
-menos, una de sentencia de cada tipo. Indica en el script a que apartado de los siguientes correspondenb
 ## EJERCICIOS
 - 1.1: INSERT Simple. Un solo registro. (jesus)
 - 1.2: INSERT con Subconsulta. Usar SELECT dentro de INSERT (miguel)
@@ -30,3 +22,35 @@ menos, una de sentencia de cada tipo. Indica en el script a que apartado de los 
 afectarás
 - Usa transacciones: Para operaciones complejas o múltiples DML
 - Haz backups: Antes de operaciones destructivas
+  
+#### EJERCICIOS CONSULTAS (OTRO SQL):
+- 1: Selección Simple con riltros (jesus)
+- 2: Búsqueda con LIKE (miguel)
+- 3: Operadores Lógicos (aron)
+- 4: Agregación Básica (stephano)
+- 5: GROUP BY Simple (jesus)
+- 6: HAVING (miguel)
+- 7: DISTINCT (aron)
+- 8: Gestión de NULL (stephano)
+- 9: Subconsulta Simple con IN (jesus)
+- 10: BETWEEN                                                                                                               (miguel)
+- 11: INNER JOIN Básico (dos tablas) (aron)
+- 12: INNER JOIN Múltiple (tres tablas) (stephano)
+- 13: LEFT JOIN (jesus)
+- 14: RIGHT JOIN (miguel)
+- 15: SELF JOIN (tabla consigo misma) (aron)
+- 16: JOIN con Agregación (stephano)
+- 17: JOIN con Condiciones Complejas (jesus)
+- 18: JOIN con Subconsultas (miguel)
+- 19: JOIN con Múltiples Condiciones (aron)
+- 20: Unión de Resultados (UNION) (stephano)
+- 21: LEFT JOIN con Filtro Complejo (jesus)
+- 22: Subconsulta en WHERE (miguel)
+- 23: Subconsulta con IN (aron)
+- 24: Subconsulta con NOT IN (stephano)
+- 25: Subconsulta con EXISTS (jesus)
+- 26: Subconsulta con NOT EXISTS (miguel)
+- 27: Subconsulta en FROM (Tabla Derivada) (aron)
+- 28: Subconsulta con ALL (stephano)
+- 29: Subconsulta con ANY/SOME (jesus)
+- 30: Subconsultas Anidadas (miguel)
