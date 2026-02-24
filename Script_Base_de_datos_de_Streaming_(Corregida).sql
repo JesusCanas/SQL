@@ -262,16 +262,6 @@ INSERT INTO contenido VALUES
 (102, 'Jurassic Park', '1993-06-11', 'Película', 'Aventura', 3),
 (103, 'The Witcher', '2019-12-20', 'Serie', 'Fantasía', 2);
 
-
-
--- -----------------------------------------------------
--- INSERT SIMPLE PELICULAS
--- -----------------------------------------------------
-
-INSERT INTO peliculas VALUES
-(100, '2010-07-16'),
-(102, '1993-06-11');
-
 -- -----------------------------------------------------
 -- CAPITULOS
 -- -----------------------------------------------------
@@ -370,3 +360,43 @@ DELETE FROM usuario WHERE DNI = '00000000A';
 -- ------------------------------------------------------------------------------------
 DELETE FROM reseña WHERE codigo_perfil = 1;
 DELETE FROM perfil WHERE codigo_perfil = 1;
+
+-- -----------------------------------------------------
+-- 1.2 INSERT con Subconsulta. Usar SELECT dentro de INSERT (miguel)
+-- -----------------------------------------------------
+
+insert into series
+select id_contenido
+from contenido
+where tipo = "serie";
+
+-- -----------------------------------------------------
+-- 1.6: INSERT a partir de un SELECT (miguel)
+-- -----------------------------------------------------
+
+insert into peliculas
+select c.id_contenido, c.fecha_salida
+from contenido c
+where tipo = (select distinct tipo
+				from contenido
+                where tipo = "pelicula");
+                
+-- -----------------------------------------------------
+-- 2.4: UPDATE con JOIN Múltiple, a varias tablas (miguel)
+-- -----------------------------------------------------
+                
+UPDATE usuario u
+JOIN perfil p ON u.DNI = p.DNI_usuario
+SET u.tipo = 'VIP'
+WHERE p.nick = 'JuanMain';
+
+-- -----------------------------------------------------
+-- 3.4: DELETE Condicional con lógica compleja (miguel)
+-- -----------------------------------------------------
+
+DELETE u
+FROM usuario u
+JOIN perfil p ON u.DNI = p.DNI_usuario
+JOIN compra c ON p.codigo_perfil = c.codigo_perfil
+JOIN metodo_de_pago m ON c.codigo_pago = m.codigo_pago
+WHERE m.tipo_pago = 'PayPal';
