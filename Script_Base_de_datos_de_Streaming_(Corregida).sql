@@ -244,7 +244,7 @@ SHOW GRANTS FOR 'desarrollador'@'localhost';
 SHOW GRANTS FOR 'soporte'@'localhost';
 
 -- -----------------------------------------------------
--- INSERT SIMPLE PRODUCTORA
+-- 1.1 INSERT SIMPLE PRODUCTORA
 -- -----------------------------------------------------
 
 INSERT INTO productora VALUES
@@ -253,7 +253,7 @@ INSERT INTO productora VALUES
 (3, 'Universal Pictures', 'Globo de Oro 2019');
 
 -- -----------------------------------------------------
--- INSERT SIMPLE CONTENIDO
+-- 1.1 INSERT SIMPLE CONTENIDO
 -- -----------------------------------------------------
 
 INSERT INTO contenido VALUES
@@ -262,8 +262,18 @@ INSERT INTO contenido VALUES
 (102, 'Jurassic Park', '1993-06-11', 'Película', 'Aventura', 3),
 (103, 'The Witcher', '2019-12-20', 'Serie', 'Fantasía', 2);
 
+
+
 -- -----------------------------------------------------
--- CAPITULOS
+-- 1.1 INSERT SIMPLE PELICULAS
+-- -----------------------------------------------------
+
+INSERT INTO peliculas VALUES
+(100, '2010-07-16'),
+(102, '1993-06-11');
+
+-- -----------------------------------------------------
+-- 1.1 CAPITULOS
 -- -----------------------------------------------------
 
 INSERT INTO capitulos (temporada, numero, duracion, id_serie) VALUES
@@ -282,7 +292,7 @@ INSERT INTO metodo_de_pago VALUES
 (3, 'Transferencia', 'Mensual');
 
 -- -----------------------------------------------------
--- INSERT SIMPLE USUARIO
+-- 1.1 INSERT SIMPLE USUARIO
 -- -----------------------------------------------------
 
 INSERT INTO usuario VALUES
@@ -291,7 +301,7 @@ INSERT INTO usuario VALUES
 ('11223344C', 'Carlos', 'Martín', 'carlos@gmail.com', '600555666', 'Básico');
 
 -- -----------------------------------------------------
--- INSERT SIMPLE PERFIL
+-- 1.1 INSERT SIMPLE PERFIL
 -- -----------------------------------------------------
 
 INSERT INTO perfil VALUES
@@ -301,7 +311,7 @@ INSERT INTO perfil VALUES
 (4, 'CarlosPerfil', '11223344C');
 
 -- -----------------------------------------------------
--- COMPRA
+-- 1.1 INSERT SIMPLE COMPRA
 -- -----------------------------------------------------
 
 INSERT INTO compra VALUES
@@ -311,7 +321,7 @@ INSERT INTO compra VALUES
 (103, 3, 1);
 
 -- -----------------------------------------------------
--- INSERT SIMPLE TRABAJADORES
+-- 1.1 INSERT SIMPLE TRABAJADORES
 -- -----------------------------------------------------
 
 INSERT INTO trabajadores 
@@ -332,7 +342,7 @@ INSERT INTO contrata VALUES
 (3, '90000004D');
 
 -- -----------------------------------------------------
--- INSERT SIMPLE RESEÑA
+-- 1.1 INSERT SIMPLE RESEÑA
 -- -----------------------------------------------------
 
 INSERT INTO reseña VALUES
@@ -342,11 +352,15 @@ INSERT INTO reseña VALUES
 (1, 103, '2024-04-20', 7, 'Buena pero algo lenta');
 SELECT * FROM reseña;
 
--- ------------------------------------------------------
--- 1.3 Múltiple. Insertar varios registros a la vez
--- ------------------------------------------------------
 
-INSERT INTO contrata (codigo_productora) SELECT codigo FROM productora;
+-- -----------------------------------------------------
+-- 1.2 INSERT con Subconsulta. Usar SELECT dentro de INSERT (miguel)
+-- -----------------------------------------------------
+
+insert into series
+select id_contenido
+from contenido
+where tipo = "serie";
 
 -- -------------------------------------------------------------
 -- 1.4: INSERT con Valores Calculados (funciones) (stephano)
@@ -357,21 +371,64 @@ VALUES (2, 103, CURDATE(),
  ROUND(7.6), 
  UPPER('muy buena serie')
  );
+ 
 -- CURDATE pone la fecha actual, ROUND redondea el decimal y UPPER hace que todo el texto de la reseña sea mayúscula
 
+-- ------------------------------------------------------
+-- 1.3 Múltiple. Insertar varios registros a la vez
+-- ------------------------------------------------------
+
+INSERT INTO contrata (codigo_productora) SELECT codigo FROM productora;
+
+-- ---------------------------------------------------------
+-- 1.5 INSERT INTO con VALIDACION
+-- ---------------------------------------------------------
+
+INSERT INTO trabajadores (DNI, nombre, apellidos, tipo_trabajador, codigo_jefe)
+SELECT '90000005E', 'Ana', 'Martínez', 'Actriz', 2
+WHERE EXISTS (
+    SELECT 1 
+    FROM contrata c
+    WHERE c.codigo_productora = 2
+);
+
+-- -----------------------------------------------------
+-- 1.6: INSERT a partir de un SELECT (miguel)
+-- -----------------------------------------------------
+
+insert into peliculas
+select c.id_contenido, c.fecha_salida
+from contenido c
+where tipo = (select distinct tipo
+				from contenido
+                where tipo = "pelicula");
+                
 -- ------------------------------------------------------
 -- 2.1 UPDATE Simple. Actualizar un solo registro
 -- ------------------------------------------------------
 
-UPDATE reseña SET puntuacion = 9 WHERE comentario = 'Muy entretenida'; -- Usando columna comentario al no haber una PK 
+UPDATE reseña SET puntuacion = 9 WHERE comentario = 'Muy entretenida';
+ -- Usando columna comentario al no haber una PK 
 
 -- ------------------------------------------------------
--- 2.2: UPDATE con Cálculo (stephano)
+-- 2.3 UPDATE CON SUBSCONSULTAS 
 -- ------------------------------------------------------
 
-UPDATE reseña
-SET puntuacion = puntuacion + 1
-WHERE puntuacion < 9;
+UPDATE trabajadores t
+SET tipo_trabajador = (
+    SELECT 'Jefe de Departamento'
+)
+WHERE codigo_jefe IS NULL
+  AND DNI LIKE '9000000%';
+  
+-- -----------------------------------------------------
+-- 2.4: UPDATE con JOIN Múltiple, a varias tablas (miguel)
+-- -----------------------------------------------------
+                
+UPDATE usuario u
+JOIN perfil p ON u.DNI = p.DNI_usuario
+SET u.tipo = 'VIP'
+WHERE p.nick = 'JuanMain';
 
 -- ------------------------------------------------------
 -- 3.1 DELETE Simple. Elimiinar un registro específico
@@ -390,6 +447,27 @@ WHERE id_contenido IN (
     FROM contenido
     WHERE tipo = 'Película'
 );
+
+-- ------------------------------------------------------------------------------------
+-- 3.3 DELETE CON JOIN 
+-- ------------------------------------------------------------------------------------
+
+DELETE r
+FROM reseña r
+JOIN perfil p ON r.codigo_perfil = p.codigo_perfil
+WHERE r.id_contenido = 101;
+
+-- -----------------------------------------------------
+-- 3.4: DELETE Condicional con lógica compleja (miguel)
+-- -----------------------------------------------------
+
+DELETE u
+FROM usuario u
+JOIN perfil p ON u.DNI = p.DNI_usuario
+JOIN compra c ON p.codigo_perfil = c.codigo_perfil
+JOIN metodo_de_pago m ON c.codigo_pago = m.codigo_pago
+WHERE m.tipo_pago = 'PayPal';
+
 
 -- ------------------------------------------------------------------------------------
 -- 3.5 DELETE en Cascada Simulado. Eliminar registros respetando integridad referencial
@@ -414,50 +492,5 @@ INSERT INTO compra VALUES
 (100, 1, 5);
 -- Comiteamos los cambios
 COMMIT;
-
--- -----------------------------------------------------
--- 1.2 INSERT con Subconsulta. Usar SELECT dentro de INSERT (miguel)
--- -----------------------------------------------------
-
-insert into series
-select id_contenido
-from contenido
-where tipo = "serie";
-
--- -----------------------------------------------------
--- 1.6: INSERT a partir de un SELECT (miguel)
--- -----------------------------------------------------
-
-insert into peliculas
-select c.id_contenido, c.fecha_salida
-from contenido c
-where tipo = (select distinct tipo
-				from contenido
-                where tipo = "pelicula");
-                
--- -----------------------------------------------------
--- 2.4: UPDATE con JOIN Múltiple, a varias tablas (miguel)
--- -----------------------------------------------------
-                
-UPDATE usuario u
-JOIN perfil p ON u.DNI = p.DNI_usuario
-SET u.tipo = 'VIP'
-WHERE p.nick = 'JuanMain';
-
--- -----------------------------------------------------
--- 3.4: DELETE Condicional con lógica compleja (miguel)
--- -----------------------------------------------------
-
-DELETE u
-FROM usuario u
-JOIN perfil p ON u.DNI = p.DNI_usuario
-JOIN compra c ON p.codigo_perfil = c.codigo_perfil
-JOIN metodo_de_pago m ON c.codigo_pago = m.codigo_pago
-WHERE m.tipo_pago = 'PayPal';
-
-
-
-
-
 
 
