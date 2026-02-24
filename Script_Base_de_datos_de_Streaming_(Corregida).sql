@@ -359,3 +359,14 @@ INSERT INTO reseña VALUES
 (3, 101, '2024-02-05', 8, 'Muy entretenida'),
 (4, 102, '2024-03-12', 10, 'Un clásico'),
 (1, 103, '2024-04-20', 7, 'Buena pero algo lenta');
+
+-- 1.3 Múltiple. Insertar varios registros a la vez
+INSERT INTO contrata (codigo_productora) SELECT codigo FROM productora;
+-- 2.1 UPDATE Simple. Actualizar un solo registro
+UPDATE reseña SET puntuacion = 9 WHERE comentario = 'Muy entretenida'; -- Usando columna comentario al no haber una PK 
+-- 3.1 DELETE Simple. Elimiinar un registro específico
+INSERT INTO usuario VALUES ('00000000A', NULL, NULL, NULL, NULL);
+DELETE FROM usuario WHERE DNI = '00000000A';
+-- 3.5 DELETE en Cascada Simulado. Eliminar registros respetando integridad referencial
+DELETE FROM reseña WHERE codigo_perfil = 1;
+DELETE FROM perfil WHERE codigo_perfil = 1;
