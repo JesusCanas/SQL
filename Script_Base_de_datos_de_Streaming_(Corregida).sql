@@ -148,16 +148,16 @@ CREATE TABLE compra (
 -- -----------------------------------------------------
 -- TABLA TRABAJADORES (RELACION REFLEXIVA)
 -- -----------------------------------------------------
-
 CREATE TABLE trabajadores (
-  DNI VARCHAR(15) NOT NULL,
+  codigo_trabajador INT AUTO_INCREMENT,
+  DNI VARCHAR(15) NOT NULL UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellidos VARCHAR(50) NOT NULL,
   tipo_trabajador VARCHAR(50) NOT NULL,
-  DNI_jefe VARCHAR(15),
-  PRIMARY KEY (DNI),
-  FOREIGN KEY (DNI_jefe)
-    REFERENCES trabajadores(DNI)
+  codigo_jefe INT,
+  PRIMARY KEY (codigo_trabajador),
+  FOREIGN KEY (codigo_jefe)
+    REFERENCES trabajadores(codigo_trabajador)
     ON DELETE SET NULL
     ON UPDATE CASCADE
 ) ENGINE=InnoDB;
@@ -235,10 +235,6 @@ SET DEFAULT ROLE ALL TO
 'desarrollador'@'localhost',
 'soporte'@'localhost';
 
--- -----------------------------------------------------
--- CONSULTAS PARA DOCUMENTAR EN WORD
--- -----------------------------------------------------
-
 SELECT user, host FROM mysql.user;
 SELECT * FROM mysql.role_edges;
 
@@ -248,7 +244,7 @@ SHOW GRANTS FOR 'desarrollador'@'localhost';
 SHOW GRANTS FOR 'soporte'@'localhost';
 
 -- -----------------------------------------------------
--- PRODUCTORA
+-- INSERT SIMPLE PRODUCTORA
 -- -----------------------------------------------------
 
 INSERT INTO productora VALUES
@@ -257,7 +253,7 @@ INSERT INTO productora VALUES
 (3, 'Universal Pictures', 'Globo de Oro 2019');
 
 -- -----------------------------------------------------
--- CONTENIDO
+-- INSERT SIMPLE CONTENIDO
 -- -----------------------------------------------------
 
 INSERT INTO contenido VALUES
@@ -266,16 +262,10 @@ INSERT INTO contenido VALUES
 (102, 'Jurassic Park', '1993-06-11', 'Película', 'Aventura', 3),
 (103, 'The Witcher', '2019-12-20', 'Serie', 'Fantasía', 2);
 
--- -----------------------------------------------------
--- SERIES
--- -----------------------------------------------------
 
-INSERT INTO series VALUES
-(101),
-(103);
 
 -- -----------------------------------------------------
--- PELICULAS
+-- INSERT SIMPLE PELICULAS
 -- -----------------------------------------------------
 
 INSERT INTO peliculas VALUES
@@ -302,7 +292,7 @@ INSERT INTO metodo_de_pago VALUES
 (3, 'Transferencia', 'Mensual');
 
 -- -----------------------------------------------------
--- USUARIO
+-- INSERT SIMPLE USUARIO
 -- -----------------------------------------------------
 
 INSERT INTO usuario VALUES
@@ -311,7 +301,7 @@ INSERT INTO usuario VALUES
 ('11223344C', 'Carlos', 'Martín', 'carlos@gmail.com', '600555666', 'Básico');
 
 -- -----------------------------------------------------
--- PERFIL
+-- INSERT SIMPLE PERFIL
 -- -----------------------------------------------------
 
 INSERT INTO perfil VALUES
@@ -331,17 +321,18 @@ INSERT INTO compra VALUES
 (103, 3, 1);
 
 -- -----------------------------------------------------
--- TRABAJADORES
+-- INSERT SIMPLE TRABAJADORES
 -- -----------------------------------------------------
 
-INSERT INTO trabajadores VALUES
-('90000001A', 'Laura', 'Gómez', 'Directora', NULL),
-('90000002B', 'Miguel', 'Santos', 'Productor', '90000001A'),
-('90000003C', 'Elena', 'Ruiz', 'Guionista', '90000002B'),
-('90000004D', 'David', 'Navarro', 'Actor', '90000002B');
+INSERT INTO trabajadores 
+(codigo_trabajador, DNI, nombre, apellidos, tipo_trabajador, codigo_jefe) VALUES
+(1, '90000001A', 'Laura', 'Gómez', 'Directora', NULL),
+(2, '90000002B', 'Miguel', 'Santos', 'Productor', 1),
+(3, '90000003C', 'Elena', 'Ruiz', 'Guionista', 2),
+(4, '90000004D', 'David', 'Navarro', 'Actor', 2);
 
 -- -----------------------------------------------------
--- CONTRATA
+-- INSERT SIMPLE CONTRATA
 -- -----------------------------------------------------
 
 INSERT INTO contrata VALUES
@@ -351,7 +342,7 @@ INSERT INTO contrata VALUES
 (3, '90000004D');
 
 -- -----------------------------------------------------
--- RESEÑA
+-- INSERT SIMPLE RESEÑA
 -- -----------------------------------------------------
 
 INSERT INTO reseña VALUES
@@ -359,14 +350,23 @@ INSERT INTO reseña VALUES
 (3, 101, '2024-02-05', 8, 'Muy entretenida'),
 (4, 102, '2024-03-12', 10, 'Un clásico'),
 (1, 103, '2024-04-20', 7, 'Buena pero algo lenta');
+SELECT * FROM reseña;
 
+-- ------------------------------------------------------
 -- 1.3 Múltiple. Insertar varios registros a la vez
+-- ------------------------------------------------------
 INSERT INTO contrata (codigo_productora) SELECT codigo FROM productora;
+-- ------------------------------------------------------
 -- 2.1 UPDATE Simple. Actualizar un solo registro
+-- ------------------------------------------------------
 UPDATE reseña SET puntuacion = 9 WHERE comentario = 'Muy entretenida'; -- Usando columna comentario al no haber una PK 
+-- ------------------------------------------------------
 -- 3.1 DELETE Simple. Elimiinar un registro específico
+-- ------------------------------------------------------
 INSERT INTO usuario VALUES ('00000000A', NULL, NULL, NULL, NULL);
 DELETE FROM usuario WHERE DNI = '00000000A';
+-- ------------------------------------------------------------------------------------
 -- 3.5 DELETE en Cascada Simulado. Eliminar registros respetando integridad referencial
+-- ------------------------------------------------------------------------------------
 DELETE FROM reseña WHERE codigo_perfil = 1;
 DELETE FROM perfil WHERE codigo_perfil = 1;
