@@ -6,10 +6,20 @@ USE streamingdb;
 SELECT  nombre_productora FROM productora WHERE premios IS NOT NULL;
 SELECT * FROM contenido WHERE id_contenido =102;
 
+-- ----------------------------------------
+-- 3.Operadores Lógicos
+-- ----------------------------------------
+SELECT * FROM usuario WHERE tipo = 'Básico' AND DNI = '11223344C';
+
 -- --------------------------------------
 -- 5. GROUP BY Simple
 -- --------------------------------------
 SELECT codigo_productora, nombre_productora FROM productora GROUP BY 1;
+
+-- ----------------------------------------
+-- 7.DISTINCT
+-- ----------------------------------------
+SELECT DISTINCT codigo_productora FROM contrata;
 
 -- ----------------------------------------
 -- 9. SubConsulta Simple CON IN 
@@ -18,8 +28,33 @@ SELECT nombre_contenido, tipo FROM contenido WHERE id_contenido
 IN ( SELECT p.id_contenido FROM peliculas p);
 
 -- ----------------------------------------
+-- 11.INNER JOIN Básico (dos tablas)
+-- ----------------------------------------
+SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario;
+
+-- ----------------------------------------
 -- 13. LEFT JOIN
 -- ----------------------------------------
+
+-- ----------------------------------------
+-- 15.SELF JOIN (tabla consigo misma)
+-- ----------------------------------------
+SELECT * FROM trabajadores t INNER JOIN trabajadores j ON  t.DNI_jefe = j.DNI WHERE j.DNI_jefe IS NULL;
+
+-- ----------------------------------------
+-- 19.JOIN con Múltiples Condiciones
+-- ----------------------------------------
+SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario WHERE u.DNI = '12345678A' AND p.nick = 'JuanKids';
+
+-- ----------------------------------------
+-- 23.Subconsulta con IN
+-- ----------------------------------------
+SELECT * FROM perfil WHERE DNI_usuario IN (SELECT DNI FROM usuario WHERE nombre = 'Juan');
+
+-- ----------------------------------------
+-- 27.Subconsulta en FROM (Tabla Derivada)
+-- ----------------------------------------
+SELECT * FROM contrata c INNER JOIN (SELECT * FROM productora WHERE codigo_productora = 1) p; 
 
 -- -----------------------------------------------------
 -- 2: Búsqueda con LIKE (miguel)
