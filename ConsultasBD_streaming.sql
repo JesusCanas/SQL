@@ -61,8 +61,11 @@ where fecha between '2024-01-01' and '2024-04-13';
 SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario;
 
 -- ----------------------------------------
--- 13. LEFT JOIN
+-- 13. LEFT JOINç
+-- Mostrar las reseñas, sean de algun perfil o no.
 -- ----------------------------------------
+SELECT * FROM reseña r LEFT JOIN perfil p 
+ON r.codigo_perfil = p.codigo_perfil;
 
 -- -----------------------------------------------------
 -- 14: RIGHT JOIN
@@ -76,6 +79,14 @@ on r.codigo_perfil = p.codigo_perfil;
 -- Consultar los jefes cuyo DNI es vacío.
 -- ----------------------------------------
 SELECT * FROM trabajadores t INNER JOIN trabajadores j ON  t.DNI_jefe = j.DNI WHERE j.DNI_jefe IS NULL;
+
+-- ----------------------------------------
+-- 17. JOIN con Condiciones Complejas
+-- Muestra los contenidos que tengan una puntuacion 
+-- entre 8 y 10.
+-- ----------------------------------------
+SELECT c.* FROM contenido c INNER JOIN reseña r
+ON r.id_contenido = c.id_contenido WHERE r.puntuacion BETWEEN 8 AND 10;
 
 -- -----------------------------------------------------
 -- 18: JOIN con Subconsultas
@@ -93,6 +104,18 @@ FROM perfil p;
 -- ----------------------------------------
 SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario WHERE u.DNI = '12345678A' AND p.nick = 'JuanKids';
 
+-- ----------------------------------------
+-- 21.LEFT JOIN CON filtro complejo
+-- pide el nombre del contenido y su puntuacion
+-- de la tabla reseña que su puntuacion sea
+-- mayor que 8 o nulo.
+-- ----------------------------------------
+SELECT c.nombre_contenido, r.puntuacion
+FROM contenido c
+LEFT JOIN reseña r 
+ON c.id_contenido = r.id_contenido
+WHERE r.puntuacion > 8 OR r.puntuacion IS NULL;
+
 -- -----------------------------------------------------
 -- 22: Subconsulta en WHERE
 -- Mostrar el perfil de todos los usuarios con nombre Juan.
@@ -106,6 +129,20 @@ where DNI_usuario = (select DNI from usuario
 -- Mostrar el perfil de todos los usuarios con nombre Juan (versión con IN).
 -- ----------------------------------------
 SELECT * FROM perfil WHERE DNI_usuario IN (SELECT DNI FROM usuario WHERE nombre = 'Juan');
+
+-- ---------------------------------------
+-- 25.SUBCONSULTAS con EXIST.  
+-- Esta subconsulta te muestra todo de la 
+-- tabla del metodo de pago que existan en 
+-- la tabla compra
+-- ----------------------------------------
+SELECT *
+FROM metodo_de_pago m
+WHERE EXISTS (
+    SELECT c.codigo_pago
+    FROM compra c
+    WHERE c.codigo_pago = m.codigo_pago
+);
 
 -- -----------------------------------------------------
 -- 26: Subconsulta con NOT EXISTS
@@ -125,58 +162,6 @@ WHERE NOT EXISTS (
 -- --------------------------------------------------
 SELECT * FROM contrata c INNER JOIN (SELECT * FROM productora WHERE codigo_productora = 1) p; 
 
--- -----------------------------------------------------
--- 30: Subconsultas Anidadas
--- Mostrar los perfiles cuyo usuario sea de tipo Básico.
--- -----------------------------------------------------
-SELECT * FROM perfil WHERE DNI_usuario IN (SELECT DNI FROM usuario WHERE nombre NOT IN (SELECT nombre FROM usuario WHERE tipo = 'Básico'));
-
--- ----------------------------------------
--- 9. SubConsulta Simple CON IN 
--- ---------------------------------------- 
-SELECT nombre_contenido, tipo FROM contenido WHERE id_contenido
-IN ( SELECT p.id_contenido FROM peliculas p);
-
--- ----------------------------------------
--- 13. LEFT JOIN
--- ----------------------------------------
-SELECT * FROM reseña r LEFT JOIN perfil p 
-ON r.codigo_perfil = p.codigo_perfil;
-
--- ----------------------------------------
--- 17. JOIN con Condiciones Complejas
--- Muestra los contenidos que tengan una puntuacion 
--- entre 8 y 10.
--- ----------------------------------------
-SELECT c.* FROM contenido c INNER JOIN reseña r
-ON r.id_contenido = c.id_contenido WHERE r.puntuacion BETWEEN 8 AND 10;
-
--- ----------------------------------------
--- 21.LEFT JOIN CON filtro complejo
--- pide el nombre del contenido y su puntuacion
--- de la tabla reseña que su puntuacion sea
--- mayor que 8 o nulo.
--- ----------------------------------------
-SELECT c.nombre_contenido, r.puntuacion
-FROM contenido c
-LEFT JOIN reseña r 
-ON c.id_contenido = r.id_contenido
-WHERE r.puntuacion > 8 OR r.puntuacion IS NULL;
-
--- ---------------------------------------
--- 25.SUBCONSULTAS con EXIST.  
--- Esta subconsulta te muestra todo de la 
--- tabla del metodo de pago que existan en 
--- la tabla compra
--- ----------------------------------------
-SELECT *
-FROM metodo_de_pago m
-WHERE EXISTS (
-    SELECT c.codigo_pago
-    FROM compra c
-    WHERE c.codigo_pago = m.codigo_pago
-);
-
 -- ---------------------------------------
 -- 29.SUBCONSULTAS con ANY/SOME. 
 -- Buscando la pelicula o serie que salio exactamente el 2010-07-16
@@ -185,3 +170,9 @@ SELECT nombre_contenido, fecha_salida FROM contenido
 WHERE fecha_salida = ANY (
     SELECT fecha_publicacion FROM peliculas 
     WHERE fecha_publicacion = '2010-07-16'); 
+
+-- -----------------------------------------------------
+-- 30: Subconsultas Anidadas
+-- Mostrar los perfiles cuyo usuario sea de tipo Básico.
+-- -----------------------------------------------------
+SELECT * FROM perfil WHERE DNI_usuario IN (SELECT DNI FROM usuario WHERE nombre NOT IN (SELECT nombre FROM usuario WHERE tipo = 'Básico'));
