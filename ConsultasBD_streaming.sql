@@ -1,20 +1,38 @@
 USE streamingdb;
 -- --------------------------------------
 -- 1 Consultas Simples
+-- Sacar el nombre de las productoras que tengan algún premio.
+-- Sacar la información del contenido con id 102.
 -- --------------------------------------
 
 SELECT  nombre_productora FROM productora WHERE premios IS NOT NULL;
 SELECT * FROM contenido WHERE id_contenido =102;
 
+-- -----------------------------------------------------
+-- 2: Búsqueda con LIKE
+-- Sacar la informacion de los usuarios cuyo nombre contenga una "a".
+-- -----------------------------------------------------
+select *from usuario
+where nombre like '%a%';
+
 -- ----------------------------------------
 -- 3.Operadores Lógicos
+-- Sacar el usuario cuyo tipo de cuenta sea basico y DNI sea "11223344C".
 -- ----------------------------------------
 SELECT * FROM usuario WHERE tipo = 'Básico' AND DNI = '11223344C';
 
 -- --------------------------------------
 -- 5. GROUP BY Simple
+-- Mostrar cuanto contenido hay de cada género.
 -- --------------------------------------
-SELECT codigo_productora, nombre_productora FROM productora GROUP BY 1;
+SELECT genero, COUNT(*) FROM contenido GROUP BY 1;
+
+-- -----------------------------------------------------
+-- 6: HAVING (miguel)
+-- 
+-- -----------------------------------------------------
+select * from usuario
+having DNI >= '12345678A';
 
 -- ----------------------------------------
 -- 7.DISTINCT
@@ -56,17 +74,7 @@ SELECT * FROM perfil WHERE DNI_usuario IN (SELECT DNI FROM usuario WHERE nombre 
 -- ----------------------------------------
 SELECT * FROM contrata c INNER JOIN (SELECT * FROM productora WHERE codigo_productora = 1) p; 
 
--- -----------------------------------------------------
--- 2: Búsqueda con LIKE (miguel)
--- -----------------------------------------------------
-select *from usuario
-where nombre like '%a%';
 
--- -----------------------------------------------------
--- 6: HAVING (miguel)
--- -----------------------------------------------------
-select * from usuario
-having DNI >= '12345678A';
 
 -- -----------------------------------------------------
 -- 10: BETWEEN (miguel)
