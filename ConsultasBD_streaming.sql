@@ -21,6 +21,13 @@ where nombre like '%a%';
 -- ----------------------------------------
 SELECT * FROM usuario WHERE tipo = 'Básico' AND DNI = '11223344C';
 
+-- ------------------------------------------------
+-- 4: Agregación Básica (stephano)
+-- Muestra cuantos contenidos hay en la plataforma.
+-- ------------------------------------------------
+SELECT COUNT(*) AS total_contenidos
+FROM contenido;
+
 -- --------------------------------------
 -- 5. GROUP BY Simple
 -- Mostrar cuanto contenido hay de cada género.
@@ -38,6 +45,13 @@ SELECT genero, COUNT(*) AS num_cont FROM contenido GROUP BY 1 HAVING num_cont >=
 -- Mostrar todos los codigos de productora distintos que han contratado a algun trabajador.
 -- ----------------------------------------
 SELECT DISTINCT codigo_productora FROM contrata;
+
+-- -----------------------------------------------------
+-- 8: Gestión de NULL (stephano)
+-- Muestra los trabajadores que no tienen jefe asignado.
+-- -----------------------------------------------------
+SELECT COUNT(*) AS total_contenidos
+FROM contenido;
 
 -- ----------------------------------------
 -- 9. SubConsulta Simple CON IN 
@@ -60,6 +74,16 @@ where fecha between '2024-01-01' and '2024-04-13';
 -- ----------------------------------------
 SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario;
 
+-- ------------------------------------------------------------------------------
+-- 12: INNER JOIN Múltiple (tres tablas) (stephano)
+-- Muestra el nick del perfil, el contenido comprado y el tipo de pago utilizado.
+-- ------------------------------------------------------------------------------
+SELECT p.nick, c.nombre_contenido, m.tipo_pago
+FROM compra co
+INNER JOIN perfil p ON co.codigo_perfil = p.codigo_perfil
+INNER JOIN contenido c ON co.id_contenido = c.id_contenido
+INNER JOIN metodo_de_pago m ON co.codigo_pago = m.codigo_pago;
+
 -- ----------------------------------------
 -- 13. LEFT JOINç
 -- Mostrar las reseñas, sean de algun perfil o no.
@@ -79,6 +103,15 @@ on r.codigo_perfil = p.codigo_perfil;
 -- Consultar los jefes cuyo DNI es vacío.
 -- ----------------------------------------
 SELECT * FROM trabajadores t INNER JOIN trabajadores j ON  t.DNI_jefe = j.DNI WHERE j.DNI_jefe IS NULL;
+
+-- ------------------------------------------------
+-- 16: JOIN con Agregación (stephano)
+-- Cuenta cuántos contenidos tiene cada productora.
+-- ------------------------------------------------
+SELECT pr.nombre_productora, COUNT(c.id_contenido) AS total_contenidos
+FROM productora pr
+JOIN contenido c ON pr.codigo_productora = c.codigo_productora
+GROUP BY pr.nombre_productora;
 
 -- ----------------------------------------
 -- 17. JOIN con Condiciones Complejas
@@ -103,6 +136,18 @@ FROM perfil p;
 -- Mostrar el perfil del usuario JuanKids.
 -- ----------------------------------------
 SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario WHERE u.DNI = '12345678A' AND p.nick = 'JuanKids';
+
+-- ------------------------------------------------------------
+-- 20: Unión de Resultados (UNION) (stephano)
+-- Muestra los nombres de películas y series en una sola lista.
+-- ------------------------------------------------------------
+SELECT nombre_contenido
+FROM contenido
+WHERE tipo = 'Película'
+UNION
+SELECT nombre_contenido
+FROM contenido
+WHERE tipo = 'Serie';
 
 -- ----------------------------------------
 -- 21.LEFT JOIN CON filtro complejo
@@ -129,6 +174,17 @@ where DNI_usuario = (select DNI from usuario
 -- Mostrar el perfil de todos los usuarios con nombre Juan (versión con IN).
 -- ----------------------------------------
 SELECT * FROM perfil WHERE DNI_usuario IN (SELECT DNI FROM usuario WHERE nombre = 'Juan');
+
+-- -------------------------------------------------------------------
+-- 24: Subconsulta con NOT IN (stephano)
+-- Muestra los contenidos que no han sido comprados por ningún perfil.
+-- -------------------------------------------------------------------
+SELECT nombre_contenido
+FROM contenido
+WHERE id_contenido NOT IN (
+    SELECT id_contenido
+    FROM compra
+);
 
 -- ---------------------------------------
 -- 25.SUBCONSULTAS con EXIST.  
@@ -161,6 +217,18 @@ WHERE NOT EXISTS (
 -- Mostrar los contratos de la productora con id = 1.
 -- --------------------------------------------------
 SELECT * FROM contrata c INNER JOIN (SELECT * FROM productora WHERE codigo_productora = 1) p; 
+
+-- -------------------------------------------------------------------------------------------------------
+-- 28: Subconsulta con ALL (stephano)
+-- Muestra los contenidos cuya fecha de salida es posterior a todas las fechas de salida de las películas.
+-- -------------------------------------------------------------------------------------------------------
+SELECT nombre_contenido, fecha_salida
+FROM contenido
+WHERE fecha_salida > ALL (
+    SELECT fecha_salida
+    FROM contenido
+    WHERE tipo = 'Película'
+);
 
 -- ---------------------------------------
 -- 29.SUBCONSULTAS con ANY/SOME. 
