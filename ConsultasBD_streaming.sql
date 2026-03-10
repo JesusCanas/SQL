@@ -35,12 +35,13 @@ SELECT genero, COUNT(*) AS num_cont FROM contenido GROUP BY 1 HAVING num_cont >=
 
 -- ----------------------------------------
 -- 7.DISTINCT
---
+-- Mostrar todos los codigos de productora distintos que han contratado a algun trabajador.
 -- ----------------------------------------
 SELECT DISTINCT codigo_productora FROM contrata;
 
 -- ----------------------------------------
 -- 9. SubConsulta Simple CON IN 
+-- Mostrar el nombre y tipo de contenido de las peliculas.
 -- ---------------------------------------- 
 SELECT nombre_contenido, tipo FROM contenido WHERE id_contenido
 IN ( SELECT p.id_contenido FROM peliculas p);
@@ -48,12 +49,14 @@ IN ( SELECT p.id_contenido FROM peliculas p);
 
 -- -----------------------------------------------------
 -- 10: BETWEEN (miguel)
+-- Mostrar las reseñas hechas entre las fechas '2024-01-01' y '2024-04-13'.
 -- -----------------------------------------------------
 select * from reseña
 where fecha between '2024-01-01' and '2024-04-13';
 
 -- ----------------------------------------
 -- 11.INNER JOIN Básico (dos tablas)
+-- Mostrar toda la información de los usuarios junto con sus perfiles.
 -- ----------------------------------------
 SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario;
 
