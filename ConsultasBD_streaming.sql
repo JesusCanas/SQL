@@ -130,3 +130,58 @@ SELECT * FROM contrata c INNER JOIN (SELECT * FROM productora WHERE codigo_produ
 -- Mostrar los perfiles cuyo usuario sea de tipo Básico.
 -- -----------------------------------------------------
 SELECT * FROM perfil WHERE DNI_usuario IN (SELECT DNI FROM usuario WHERE nombre NOT IN (SELECT nombre FROM usuario WHERE tipo = 'Básico'));
+
+-- ----------------------------------------
+-- 9. SubConsulta Simple CON IN 
+-- ---------------------------------------- 
+SELECT nombre_contenido, tipo FROM contenido WHERE id_contenido
+IN ( SELECT p.id_contenido FROM peliculas p);
+
+-- ----------------------------------------
+-- 13. LEFT JOIN
+-- ----------------------------------------
+SELECT * FROM reseña r LEFT JOIN perfil p 
+ON r.codigo_perfil = p.codigo_perfil;
+
+-- ----------------------------------------
+-- 17. JOIN con Condiciones Complejas
+-- Muestra los contenidos que tengan una puntuacion 
+-- entre 8 y 10.
+-- ----------------------------------------
+SELECT c.* FROM contenido c INNER JOIN reseña r
+ON r.id_contenido = c.id_contenido WHERE r.puntuacion BETWEEN 8 AND 10;
+
+-- ----------------------------------------
+-- 21.LEFT JOIN CON filtro complejo
+-- pide el nombre del contenido y su puntuacion
+-- de la tabla reseña que su puntuacion sea
+-- mayor que 8 o nulo.
+-- ----------------------------------------
+SELECT c.nombre_contenido, r.puntuacion
+FROM contenido c
+LEFT JOIN reseña r 
+ON c.id_contenido = r.id_contenido
+WHERE r.puntuacion > 8 OR r.puntuacion IS NULL;
+
+-- ---------------------------------------
+-- 25.SUBCONSULTAS con EXIST.  
+-- Esta subconsulta te muestra todo de la 
+-- tabla del metodo de pago que existan en 
+-- la tabla compra
+-- ----------------------------------------
+SELECT *
+FROM metodo_de_pago m
+WHERE EXISTS (
+    SELECT c.codigo_pago
+    FROM compra c
+    WHERE c.codigo_pago = m.codigo_pago
+);
+
+-- ---------------------------------------
+-- 29.SUBCONSULTAS con ANY/SOME. 
+-- Buscando la pelicula o serie que salio exactamente el 2010-07-16
+-- ----------------------------------------
+SELECT nombre_contenido, fecha_salida FROM contenido
+WHERE fecha_salida = ANY (
+    SELECT fecha_publicacion FROM peliculas 
+    WHERE fecha_publicacion = '2010-07-16'); 
