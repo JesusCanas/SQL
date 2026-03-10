@@ -50,8 +50,9 @@ SELECT DISTINCT codigo_productora FROM contrata;
 -- 8: Gestión de NULL (stephano)
 -- Muestra los trabajadores que no tienen jefe asignado.
 -- -----------------------------------------------------
-SELECT COUNT(*) AS total_contenidos
-FROM contenido;
+SELECT *
+FROM trabajadores
+WHERE codigo_jefe IS NULL;
 
 -- ----------------------------------------
 -- 9. SubConsulta Simple CON IN 
