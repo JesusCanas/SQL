@@ -70,11 +70,13 @@ where p.nick = 'JuanKids';
 
 -- ----------------------------------------
 -- 15.SELF JOIN (tabla consigo misma)
+-- Consultar los jefes cuyo DNI es vacío.
 -- ----------------------------------------
 SELECT * FROM trabajadores t INNER JOIN trabajadores j ON  t.DNI_jefe = j.DNI WHERE j.DNI_jefe IS NULL;
 
 -- -----------------------------------------------------
 -- 18: JOIN con Subconsultas (miguel)
+-- Consultar las reseñas que ha hecho un usuario, mostrando su nick.
 -- -----------------------------------------------------
 SELECT p.nick,
        (SELECT COUNT(*)
@@ -84,11 +86,13 @@ FROM perfil p;
 
 -- ----------------------------------------
 -- 19.JOIN con Múltiples Condiciones
+-- Mostrar el perfil del usuario JuanKids.
 -- ----------------------------------------
 SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario WHERE u.DNI = '12345678A' AND p.nick = 'JuanKids';
 
 -- -----------------------------------------------------
 -- 22: Subconsulta en WHERE (miguel)
+-- Mostrar el perfil de todos los usuarios con nombre Juan.
 -- -----------------------------------------------------
 select * from perfil
 where DNI_usuario = (select DNI from usuario
@@ -96,11 +100,13 @@ where DNI_usuario = (select DNI from usuario
 
 -- ----------------------------------------
 -- 23.Subconsulta con IN
+-- Mostrar el perfil de todos los usuarios con nombre Juan (versión con IN).
 -- ----------------------------------------
 SELECT * FROM perfil WHERE DNI_usuario IN (SELECT DNI FROM usuario WHERE nombre = 'Juan');
 
 -- -----------------------------------------------------
 -- 26: Subconsulta con NOT EXISTS (miguel)
+-- Mostrar el contenido el cual no tiene ninguna reseña.
 -- -----------------------------------------------------
 SELECT *
 FROM contenido c
@@ -110,9 +116,10 @@ WHERE NOT EXISTS (
     WHERE r.id_contenido = c.id_contenido
 );
 
--- ----------------------------------------
+-- --------------------------------------------------
 -- 27.Subconsulta en FROM (Tabla Derivada)
--- ----------------------------------------
+-- Mostrar los contratos de la productora con id = 1.
+-- --------------------------------------------------
 SELECT * FROM contrata c INNER JOIN (SELECT * FROM productora WHERE codigo_productora = 1) p; 
 
 -- -----------------------------------------------------
