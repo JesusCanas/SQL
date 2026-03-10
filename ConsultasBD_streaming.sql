@@ -29,13 +29,13 @@ SELECT genero, COUNT(*) FROM contenido GROUP BY 1;
 
 -- -----------------------------------------------------
 -- 6: HAVING (miguel)
--- 
+-- Mostrar cuanto contenido hay de cada género que tenga 2 o mas contenidos.
 -- -----------------------------------------------------
-select * from usuario
-having DNI >= '12345678A';
+SELECT genero, COUNT(*) AS num_cont FROM contenido GROUP BY 1 HAVING num_cont >= 2;
 
 -- ----------------------------------------
 -- 7.DISTINCT
+--
 -- ----------------------------------------
 SELECT DISTINCT codigo_productora FROM contrata;
 
@@ -44,6 +44,13 @@ SELECT DISTINCT codigo_productora FROM contrata;
 -- ---------------------------------------- 
 SELECT nombre_contenido, tipo FROM contenido WHERE id_contenido
 IN ( SELECT p.id_contenido FROM peliculas p);
+
+
+-- -----------------------------------------------------
+-- 10: BETWEEN (miguel)
+-- -----------------------------------------------------
+select * from reseña
+where fecha between '2024-01-01' and '2024-04-13';
 
 -- ----------------------------------------
 -- 11.INNER JOIN Básico (dos tablas)
@@ -54,40 +61,17 @@ SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario;
 -- 13. LEFT JOIN
 -- ----------------------------------------
 
--- ----------------------------------------
--- 15.SELF JOIN (tabla consigo misma)
--- ----------------------------------------
-SELECT * FROM trabajadores t INNER JOIN trabajadores j ON  t.DNI_jefe = j.DNI WHERE j.DNI_jefe IS NULL;
-
--- ----------------------------------------
--- 19.JOIN con Múltiples Condiciones
--- ----------------------------------------
-SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario WHERE u.DNI = '12345678A' AND p.nick = 'JuanKids';
-
--- ----------------------------------------
--- 23.Subconsulta con IN
--- ----------------------------------------
-SELECT * FROM perfil WHERE DNI_usuario IN (SELECT DNI FROM usuario WHERE nombre = 'Juan');
-
--- ----------------------------------------
--- 27.Subconsulta en FROM (Tabla Derivada)
--- ----------------------------------------
-SELECT * FROM contrata c INNER JOIN (SELECT * FROM productora WHERE codigo_productora = 1) p; 
-
-
-
--- -----------------------------------------------------
--- 10: BETWEEN (miguel)
--- -----------------------------------------------------
-select * from reseña
-where fecha between '2024-01-01' and '2024-04-13';
-
 -- -----------------------------------------------------
 -- 14: RIGHT JOIN (miguel)
 -- -----------------------------------------------------
 select * from reseña r right join perfil p
 on r.codigo_perfil = p.codigo_perfil
 where p.nick = 'JuanKids';
+
+-- ----------------------------------------
+-- 15.SELF JOIN (tabla consigo misma)
+-- ----------------------------------------
+SELECT * FROM trabajadores t INNER JOIN trabajadores j ON  t.DNI_jefe = j.DNI WHERE j.DNI_jefe IS NULL;
 
 -- -----------------------------------------------------
 -- 18: JOIN con Subconsultas (miguel)
@@ -98,12 +82,22 @@ SELECT p.nick,
          WHERE r.codigo_perfil = p.codigo_perfil)  AS total_reseñas
 FROM perfil p;
 
+-- ----------------------------------------
+-- 19.JOIN con Múltiples Condiciones
+-- ----------------------------------------
+SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario WHERE u.DNI = '12345678A' AND p.nick = 'JuanKids';
+
 -- -----------------------------------------------------
 -- 22: Subconsulta en WHERE (miguel)
 -- -----------------------------------------------------
 select * from perfil
 where DNI_usuario = (select DNI from usuario
 					where nombre = 'Juan');
+
+-- ----------------------------------------
+-- 23.Subconsulta con IN
+-- ----------------------------------------
+SELECT * FROM perfil WHERE DNI_usuario IN (SELECT DNI FROM usuario WHERE nombre = 'Juan');
 
 -- -----------------------------------------------------
 -- 26: Subconsulta con NOT EXISTS (miguel)
@@ -115,6 +109,11 @@ WHERE NOT EXISTS (
     FROM reseña r
     WHERE r.id_contenido = c.id_contenido
 );
+
+-- ----------------------------------------
+-- 27.Subconsulta en FROM (Tabla Derivada)
+-- ----------------------------------------
+SELECT * FROM contrata c INNER JOIN (SELECT * FROM productora WHERE codigo_productora = 1) p; 
 
 -- -----------------------------------------------------
 -- 30: Subconsultas Anidadas (miguel)
