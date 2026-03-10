@@ -127,9 +127,6 @@ SELECT * FROM contrata c INNER JOIN (SELECT * FROM productora WHERE codigo_produ
 
 -- -----------------------------------------------------
 -- 30: Subconsultas Anidadas
+-- Mostrar los perfiles cuyo usuario sea de tipo Básico.
 -- -----------------------------------------------------
-SELECT nombre_contenido,
-       (SELECT AVG(puntuacion)
-        FROM reseña r
-        WHERE r.id_contenido = c.id_contenido) AS puntuacion_media
-FROM contenido c;
+SELECT * FROM perfil WHERE DNI_usuario IN (SELECT DNI FROM usuario WHERE nombre NOT IN (SELECT nombre FROM usuario WHERE tipo = 'Básico'));
