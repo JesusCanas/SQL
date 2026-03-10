@@ -66,10 +66,10 @@ SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario;
 
 -- -----------------------------------------------------
 -- 14: RIGHT JOIN (miguel)
+-- Mostrar todos los perfiles, junto con las resseñas que han hecho, mostrar tambien los perfiles sin reseñas.
 -- -----------------------------------------------------
-select * from reseña r right join perfil p
-on r.codigo_perfil = p.codigo_perfil
-where p.nick = 'JuanKids';
+select * from perfil p right join reseña r
+on r.codigo_perfil = p.codigo_perfil;
 
 -- ----------------------------------------
 -- 15.SELF JOIN (tabla consigo misma)
