@@ -28,7 +28,7 @@ SELECT * FROM usuario WHERE tipo = 'Básico' AND DNI = '11223344C';
 SELECT genero, COUNT(*) FROM contenido GROUP BY 1;
 
 -- -----------------------------------------------------
--- 6: HAVING (miguel)
+-- 6: HAVING
 -- Mostrar cuanto contenido hay de cada género que tenga 2 o mas contenidos.
 -- -----------------------------------------------------
 SELECT genero, COUNT(*) AS num_cont FROM contenido GROUP BY 1 HAVING num_cont >= 2;
@@ -48,7 +48,7 @@ IN ( SELECT p.id_contenido FROM peliculas p);
 
 
 -- -----------------------------------------------------
--- 10: BETWEEN (miguel)
+-- 10: BETWEEN
 -- Mostrar las reseñas hechas entre las fechas '2024-01-01' y '2024-04-13'.
 -- -----------------------------------------------------
 select * from reseña
@@ -65,10 +65,10 @@ SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario;
 -- ----------------------------------------
 
 -- -----------------------------------------------------
--- 14: RIGHT JOIN (miguel)
+-- 14: RIGHT JOIN
 -- Mostrar todos los perfiles, junto con las resseñas que han hecho, mostrar tambien los perfiles sin reseñas.
 -- -----------------------------------------------------
-select * from perfil p right join reseña r
+select * from reseña r right join perfil p
 on r.codigo_perfil = p.codigo_perfil;
 
 -- ----------------------------------------
@@ -78,7 +78,7 @@ on r.codigo_perfil = p.codigo_perfil;
 SELECT * FROM trabajadores t INNER JOIN trabajadores j ON  t.DNI_jefe = j.DNI WHERE j.DNI_jefe IS NULL;
 
 -- -----------------------------------------------------
--- 18: JOIN con Subconsultas (miguel)
+-- 18: JOIN con Subconsultas
 -- Consultar las reseñas que ha hecho un usuario, mostrando su nick.
 -- -----------------------------------------------------
 SELECT p.nick,
@@ -126,7 +126,7 @@ WHERE NOT EXISTS (
 SELECT * FROM contrata c INNER JOIN (SELECT * FROM productora WHERE codigo_productora = 1) p; 
 
 -- -----------------------------------------------------
--- 30: Subconsultas Anidadas (miguel)
+-- 30: Subconsultas Anidadas
 -- -----------------------------------------------------
 SELECT nombre_contenido,
        (SELECT AVG(puntuacion)
