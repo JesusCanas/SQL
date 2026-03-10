@@ -94,7 +94,7 @@ FROM perfil p;
 SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario WHERE u.DNI = '12345678A' AND p.nick = 'JuanKids';
 
 -- -----------------------------------------------------
--- 22: Subconsulta en WHERE (miguel)
+-- 22: Subconsulta en WHERE
 -- Mostrar el perfil de todos los usuarios con nombre Juan.
 -- -----------------------------------------------------
 select * from perfil
@@ -108,7 +108,7 @@ where DNI_usuario = (select DNI from usuario
 SELECT * FROM perfil WHERE DNI_usuario IN (SELECT DNI FROM usuario WHERE nombre = 'Juan');
 
 -- -----------------------------------------------------
--- 26: Subconsulta con NOT EXISTS (miguel)
+-- 26: Subconsulta con NOT EXISTS
 -- Mostrar el contenido el cual no tiene ninguna reseña.
 -- -----------------------------------------------------
 SELECT *
