@@ -103,7 +103,7 @@ on r.codigo_perfil = p.codigo_perfil;
 -- 15.SELF JOIN (tabla consigo misma)
 -- Consultar los jefes cuyo DNI es vacío.
 -- ----------------------------------------
-SELECT * FROM trabajadores t INNER JOIN trabajadores j ON  t.DNI_jefe = j.DNI WHERE j.DNI_jefe IS NULL;
+SELECT * FROM trabajadores t INNER JOIN trabajadores j ON  t.codigo_jefe = j.codigo_trabajador WHERE j.codigo_jefe IS NULL;
 
 -- ------------------------------------------------
 -- 16: JOIN con Agregación (stephano)
