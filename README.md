@@ -54,3 +54,37 @@ afectarás
 - 28: Subconsulta con ALL (stephano)
 - 29: Subconsulta con ANY/SOME (jesus)
 - 30: Subconsultas Anidadas (miguel)
+# CORREGIR
+Revisión del modelo:
+
+   - Revisar la clave primaria de la tabla capítulos, 
+
+   - Añadir columnas a la tabla serie para justificar su existencia. 
+
+  - Revisar la clave primaria de la tabla contrata, ¿no sería conveniente utilizar el código de trabajador? 
+
+  - Al tipo de usuario, ¿se le podrían limitar los valores a incluir con un tipo de datos enum o un check? 
+
+  - ¿Podéis ajustar más el tipo de dato de la columna puntuación de reseña? 
+
+  - Revisar el tipo de datos utilizado para almacenar los premios.
+
+Revisión Consultas:
+
+   - La consulta 5 devuelve que sólo hay un contenido de género "Terror" y la consulta 6 que tiene 2. Revisar. 
+
+  - Revisar si la consulta 14 devuelve lo que se indica en el enunciado para todos los casos posibles. 
+
+  - Revisar si la consulta 15 retorna lo que se indica en el enunciado. 
+
+  - Complicar más la consulta 19 
+
+  -  Consulta 20 marcar las que son de cada tipo. 
+
+  - Complicar más la consulta 21
+
+  - Revisar consulta 22. Pueden existir muchos "Juan" en la tabla usuarios.
+
+  - Incorrecta la consulta 27
+
+  - Revisar definición de la consulta 29. 
