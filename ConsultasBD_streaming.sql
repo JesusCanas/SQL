@@ -22,7 +22,7 @@ where nombre like '%a%';
 SELECT * FROM usuario WHERE tipo = 'Básico' AND DNI = '11223344C';
 
 -- ------------------------------------------------
--- 4: Agregación Básica (stephano)
+-- 4: Agregación Básica
 -- Muestra cuantos contenidos hay en la plataforma.
 -- ------------------------------------------------
 SELECT COUNT(*) AS total_contenidos
@@ -55,9 +55,9 @@ FROM trabajadores
 WHERE codigo_jefe IS NULL;
 
 -- ----------------------------------------
--- 9. SubConsulta Simple CON IN 
+-- 9. SubConsulta Simple CON IN
 -- Mostrar el nombre y tipo de contenido de las peliculas.
--- ---------------------------------------- 
+-- ----------------------------------------
 SELECT nombre_contenido, tipo FROM contenido WHERE id_contenido
 IN ( SELECT p.id_contenido FROM peliculas p);
 
@@ -89,21 +89,26 @@ INNER JOIN metodo_de_pago m ON co.codigo_pago = m.codigo_pago;
 -- 13. LEFT JOINç
 -- Mostrar las reseñas, sean de algun perfil o no.
 -- ----------------------------------------
-SELECT * FROM reseña r LEFT JOIN perfil p 
+SELECT * FROM reseña r LEFT JOIN perfil p
 ON r.codigo_perfil = p.codigo_perfil;
 
 -- -----------------------------------------------------
 -- 14: RIGHT JOIN
--- Mostrar todos los perfiles, junto con las resseñas que han hecho, mostrar tambien los perfiles sin reseñas.
+-- Mostrar todos los perfiles, junto con las reseñas que han hecho, mostrar tambien los perfiles sin reseñas.
 -- -----------------------------------------------------
-select * from reseña r right join perfil p
+select r.comentario, r.id_contenido, p.nick 
+from reseña r 
+right join perfil p
 on r.codigo_perfil = p.codigo_perfil;
 
 -- ----------------------------------------
 -- 15.SELF JOIN (tabla consigo misma)
 -- Consultar los jefes cuyo DNI es vacío.
 -- ----------------------------------------
-SELECT * FROM trabajadores t INNER JOIN trabajadores j ON  t.codigo_jefe = j.codigo_trabajador WHERE j.codigo_jefe IS NULL;
+SELECT * FROM trabajadores t 
+INNER JOIN trabajadores j 
+ON  t.DNI_jefe = j.DNI 
+WHERE j.DNI_jefe IS NULL;
 
 -- ------------------------------------------------
 -- 16: JOIN con Agregación (stephano)
@@ -116,7 +121,7 @@ GROUP BY pr.nombre_productora;
 
 -- ----------------------------------------
 -- 17. JOIN con Condiciones Complejas
--- Muestra los contenidos que tengan una puntuacion 
+-- Muestra los contenidos que tengan una puntuacion
 -- entre 8 y 10.
 -- ----------------------------------------
 SELECT c.* FROM contenido c INNER JOIN reseña r
@@ -134,19 +139,25 @@ FROM perfil p;
 
 -- ----------------------------------------
 -- 19.JOIN con Múltiples Condiciones
--- Mostrar el perfil del usuario JuanKids.
+-- Mostrar el perfil del usuario con DNI 12345678A, cuyo nombre de usuario sea JuanKids, o los usuarios cuyo apellido sea Martín.
 -- ----------------------------------------
-SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario WHERE u.DNI = '12345678A' AND p.nick = 'JuanKids';
+SELECT * FROM perfil p 
+INNER JOIN usuario u 
+ON u.DNI = p.DNI_usuario 
+WHERE u.DNI = '12345678A' 
+AND p.nick = 'JuanKids'
+OR u.apellidos = 'Martín'
+AND telefono = '666666666';
 
 -- ------------------------------------------------------------
 -- 20: Unión de Resultados (UNION) (stephano)
--- Muestra los nombres de películas y series en una sola lista.
+-- Muestra los nombres de películas y series en una sola lista, indicando series con S y peliculas con P.
 -- ------------------------------------------------------------
-SELECT nombre_contenido
+SELECT nombre_contenido, 'P'
 FROM contenido
 WHERE tipo = 'Película'
 UNION
-SELECT nombre_contenido
+SELECT nombre_contenido, 'S'
 FROM contenido
 WHERE tipo = 'Serie';
 
@@ -158,16 +169,16 @@ WHERE tipo = 'Serie';
 -- ----------------------------------------
 SELECT c.nombre_contenido, r.puntuacion
 FROM contenido c
-LEFT JOIN reseña r 
+LEFT JOIN reseña r
 ON c.id_contenido = r.id_contenido
-WHERE r.puntuacion > 8 OR r.puntuacion IS NULL;
+WHERE (r.puntuacion > 8 AND c.tipo = 'Película') OR (r.puntuacion IS NULL AND c.nombre_contenido = 'The Frog');
 
 -- -----------------------------------------------------
 -- 22: Subconsulta en WHERE
 -- Mostrar el perfil de todos los usuarios con nombre Juan.
 -- -----------------------------------------------------
 select * from perfil
-where DNI_usuario = (select DNI from usuario
+where DNI_usuario IN (select DNI from usuario
 					where nombre = 'Juan');
 
 -- ----------------------------------------
@@ -188,9 +199,9 @@ WHERE id_contenido NOT IN (
 );
 
 -- ---------------------------------------
--- 25.SUBCONSULTAS con EXIST.  
--- Esta subconsulta te muestra todo de la 
--- tabla del metodo de pago que existan en 
+-- 25.SUBCONSULTAS con EXIST.
+-- Esta subconsulta te muestra todo de la
+-- tabla del metodo de pago que existan en
 -- la tabla compra
 -- ----------------------------------------
 SELECT *
@@ -217,7 +228,14 @@ WHERE NOT EXISTS (
 -- 27.Subconsulta en FROM (Tabla Derivada)
 -- Mostrar los contratos de la productora con id = 1.
 -- --------------------------------------------------
-SELECT * FROM contrata c INNER JOIN (SELECT * FROM productora WHERE codigo_productora = 1) p; 
+SELECT * 
+FROM contrata c
+INNER JOIN (
+    SELECT * 
+    FROM productora 
+    WHERE codigo_productora = 1
+) p
+ON c.codigo_productora = p.codigo_productora;
 
 -- -------------------------------------------------------------------------------------------------------
 -- 28: Subconsulta con ALL (stephano)
@@ -232,13 +250,13 @@ WHERE fecha_salida > ALL (
 );
 
 -- ---------------------------------------
--- 29.SUBCONSULTAS con ANY/SOME. 
--- Buscando la pelicula o serie que salio exactamente el 2010-07-16
+-- 29.SUBCONSULTAS con ANY/SOME.
+-- Mostrar cualquier contenido que se haya publicado en la fecha 2010-07-16
 -- ----------------------------------------
 SELECT nombre_contenido, fecha_salida FROM contenido
 WHERE fecha_salida = ANY (
-    SELECT fecha_publicacion FROM peliculas 
-    WHERE fecha_publicacion = '2010-07-16'); 
+    SELECT fecha_publicacion FROM peliculas
+    WHERE fecha_publicacion = '2010-07-16');
 
 -- -----------------------------------------------------
 -- 30: Subconsultas Anidadas
