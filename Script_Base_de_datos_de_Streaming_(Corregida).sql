@@ -148,16 +148,16 @@ CREATE TABLE compra (
 -- -----------------------------------------------------
 -- TABLA TRABAJADORES (RELACION REFLEXIVA)
 -- -----------------------------------------------------
+
 CREATE TABLE trabajadores (
-  codigo_trabajador INT AUTO_INCREMENT,
-  DNI VARCHAR(15) NOT NULL UNIQUE,
+  DNI VARCHAR(15) NOT NULL,
   nombre VARCHAR(50) NOT NULL,
   apellidos VARCHAR(50) NOT NULL,
   tipo_trabajador VARCHAR(50) NOT NULL,
-  codigo_jefe INT,
-  PRIMARY KEY (codigo_trabajador),
-  FOREIGN KEY (codigo_jefe)
-    REFERENCES trabajadores(codigo_trabajador)
+  DNI_jefe VARCHAR(15),
+  PRIMARY KEY (DNI),
+  FOREIGN KEY (DNI_jefe)
+    REFERENCES trabajadores(DNI)
     ON DELETE SET NULL
     ON UPDATE CASCADE
 ) ENGINE=InnoDB;
@@ -205,15 +205,15 @@ CREATE TABLE reseña (
 -- CREACION DE ROLES
 -- -----------------------------------------------------
 
-CREATE ROLE IF NOT EXISTS administrador;
-CREATE ROLE IF NOT EXISTS cliente;
-CREATE ROLE IF NOT EXISTS desarrollador;
-CREATE ROLE IF NOT EXISTS soporte;
+-- CREATE ROLE IF NOT EXISTS administrador;
+-- CREATE ROLE IF NOT EXISTS cliente;
+-- CREATE ROLE IF NOT EXISTS desarrollador;
+-- CREATE ROLE IF NOT EXISTS soporte;
 
-GRANT ALL PRIVILEGES ON streamingdb.* TO administrador;
-GRANT SELECT ON streamingdb.* TO cliente;
-GRANT SELECT, UPDATE, INSERT ON streamingdb.* TO desarrollador;
-GRANT SELECT, UPDATE ON streamingdb.* TO soporte;
+-- GRANT ALL PRIVILEGES ON streamingdb.* TO administrador;
+-- GRANT SELECT ON streamingdb.* TO cliente;
+-- GRANT SELECT, UPDATE, INSERT ON streamingdb.* TO desarrollador;
+-- GRANT SELECT, UPDATE ON streamingdb.* TO soporte;
 
 -- -----------------------------------------------------
 -- CREACION DE USUARIOS
@@ -235,6 +235,10 @@ SET DEFAULT ROLE ALL TO
 'desarrollador'@'localhost',
 'soporte'@'localhost';
 
+-- -----------------------------------------------------
+-- CONSULTAS PARA DOCUMENTAR EN WORD
+-- -----------------------------------------------------
+
 SELECT user, host FROM mysql.user;
 SELECT * FROM mysql.role_edges;
 
@@ -244,7 +248,7 @@ SHOW GRANTS FOR 'desarrollador'@'localhost';
 SHOW GRANTS FOR 'soporte'@'localhost';
 
 -- -----------------------------------------------------
--- 1.1 INSERT SIMPLE PRODUCTORA
+-- PRODUCTORA
 -- -----------------------------------------------------
 
 INSERT INTO productora VALUES
@@ -253,19 +257,26 @@ INSERT INTO productora VALUES
 (3, 'Universal Pictures', 'Globo de Oro 2019');
 
 -- -----------------------------------------------------
--- 1.1 INSERT SIMPLE CONTENIDO
+-- CONTENIDO
 -- -----------------------------------------------------
 
 INSERT INTO contenido VALUES
 (100, 'Inception', '2010-07-16', 'Película', 'Ciencia Ficción', 1),
 (101, 'Stranger Things', '2016-07-15', 'Serie', 'Terror', 2),
 (102, 'Jurassic Park', '1993-06-11', 'Película', 'Aventura', 3),
-(103, 'The Witcher', '2019-12-20', 'Serie', 'Fantasía', 2);
-
-
+(103, 'The Witcher', '2019-12-20', 'Serie', 'Fantasía', 2),
+(104, 'The Frog', '1956-05-30', 'Película', 'Terror', 2);
 
 -- -----------------------------------------------------
--- 1.1 INSERT SIMPLE PELICULAS
+-- SERIES
+-- -----------------------------------------------------
+
+INSERT INTO series VALUES
+(101),
+(103);
+
+-- -----------------------------------------------------
+-- PELICULAS
 -- -----------------------------------------------------
 
 INSERT INTO peliculas VALUES
@@ -273,7 +284,7 @@ INSERT INTO peliculas VALUES
 (102, '1993-06-11');
 
 -- -----------------------------------------------------
--- 1.1 CAPITULOS
+-- CAPITULOS
 -- -----------------------------------------------------
 
 INSERT INTO capitulos (temporada, numero, duracion, id_serie) VALUES
@@ -292,26 +303,28 @@ INSERT INTO metodo_de_pago VALUES
 (3, 'Transferencia', 'Mensual');
 
 -- -----------------------------------------------------
--- 1.1 INSERT SIMPLE USUARIO
+-- USUARIO
 -- -----------------------------------------------------
 
 INSERT INTO usuario VALUES
 ('12345678A', 'Juan', 'Pérez', 'juan@gmail.com', '600111222', 'Premium'),
 ('87654321B', 'Ana', 'López', 'ana@gmail.com', '600333444', 'Estándar'),
-('11223344C', 'Carlos', 'Martín', 'carlos@gmail.com', '600555666', 'Básico');
+('11223344C', 'Carlos', 'Martín', 'carlos@gmail.com', '600555666', 'Básico'),
+('12345679B', 'Jose', 'Martín', 'jose@gmail.com', '666666666', 'Básico');
 
 -- -----------------------------------------------------
--- 1.1 INSERT SIMPLE PERFIL
+-- PERFIL
 -- -----------------------------------------------------
 
 INSERT INTO perfil VALUES
 (1, 'JuanKids', '12345678A'),
 (2, 'JuanMain', '12345678A'),
 (3, 'AnaPerfil', '87654321B'),
-(4, 'CarlosPerfil', '11223344C');
+(4, 'CarlosPerfil', '11223344C'),
+(5, 'JoseMartin', '12345679B');
 
 -- -----------------------------------------------------
--- 1.1 INSERT SIMPLE COMPRA
+-- COMPRA
 -- -----------------------------------------------------
 
 INSERT INTO compra VALUES
@@ -321,18 +334,17 @@ INSERT INTO compra VALUES
 (103, 3, 1);
 
 -- -----------------------------------------------------
--- 1.1 INSERT SIMPLE TRABAJADORES
+-- TRABAJADORES
 -- -----------------------------------------------------
 
-INSERT INTO trabajadores 
-(codigo_trabajador, DNI, nombre, apellidos, tipo_trabajador, codigo_jefe) VALUES
-(1, '90000001A', 'Laura', 'Gómez', 'Directora', NULL),
-(2, '90000002B', 'Miguel', 'Santos', 'Productor', 1),
-(3, '90000003C', 'Elena', 'Ruiz', 'Guionista', 2),
-(4, '90000004D', 'David', 'Navarro', 'Actor', 2);
+INSERT INTO trabajadores VALUES
+('90000001A', 'Laura', 'Gómez', 'Directora', NULL),
+('90000002B', 'Miguel', 'Santos', 'Productor', '90000001A'),
+('90000003C', 'Elena', 'Ruiz', 'Guionista', '90000002B'),
+('90000004D', 'David', 'Navarro', 'Actor', '90000002B');
 
 -- -----------------------------------------------------
--- INSERT SIMPLE CONTRATA
+-- CONTRATA
 -- -----------------------------------------------------
 
 INSERT INTO contrata VALUES
@@ -342,7 +354,7 @@ INSERT INTO contrata VALUES
 (3, '90000004D');
 
 -- -----------------------------------------------------
--- 1.1 INSERT SIMPLE RESEÑA
+-- RESEÑA
 -- -----------------------------------------------------
 
 INSERT INTO reseña VALUES
@@ -350,147 +362,49 @@ INSERT INTO reseña VALUES
 (3, 101, '2024-02-05', 8, 'Muy entretenida'),
 (4, 102, '2024-03-12', 10, 'Un clásico'),
 (1, 103, '2024-04-20', 7, 'Buena pero algo lenta');
-SELECT * FROM reseña;
 
-
--- -----------------------------------------------------
--- 1.2 INSERT con Subconsulta. Usar SELECT dentro de INSERT (miguel)
--- -----------------------------------------------------
-
-insert into series
-select id_contenido
-from contenido
-where tipo = "serie";
-
--- -------------------------------------------------------------
--- 1.4: INSERT con Valores Calculados (funciones) (stephano)
--- -------------------------------------------------------------
-
-INSERT INTO reseña (codigo_perfil, id_contenido, fecha, puntuacion, comentario)
-VALUES (2, 103, CURDATE(),
- ROUND(7.6), 
- UPPER('muy buena serie')
- );
- 
--- CURDATE pone la fecha actual, ROUND redondea el decimal y UPPER hace que todo el texto de la reseña sea mayúscula
-
--- ------------------------------------------------------
 -- 1.3 Múltiple. Insertar varios registros a la vez
--- ------------------------------------------------------
-
-INSERT INTO contrata (codigo_productora) SELECT codigo FROM productora;
-
--- ---------------------------------------------------------
--- 1.5 INSERT INTO con VALIDACION
--- ---------------------------------------------------------
-
-INSERT INTO trabajadores (DNI, nombre, apellidos, tipo_trabajador, codigo_jefe)
-SELECT '90000005E', 'Ana', 'Martínez', 'Actriz', 2
-WHERE EXISTS (
-    SELECT 1 
-    FROM contrata c
-    WHERE c.codigo_productora = 2
-);
-
--- -----------------------------------------------------
--- 1.6: INSERT a partir de un SELECT (miguel)
--- -----------------------------------------------------
-
-insert into peliculas
-select c.id_contenido, c.fecha_salida
-from contenido c
-where tipo = (select distinct tipo
-				from contenido
-                where tipo = "pelicula");
-                
--- ------------------------------------------------------
+-- INSERT INTO contrata (codigo_productora) SELECT codigo FROM productora;
 -- 2.1 UPDATE Simple. Actualizar un solo registro
--- ------------------------------------------------------
-
-UPDATE reseña SET puntuacion = 9 WHERE comentario = 'Muy entretenida';
- -- Usando columna comentario al no haber una PK 
-
--- ------------------------------------------------------
--- 2.3 UPDATE CON SUBSCONSULTAS 
--- ------------------------------------------------------
-
-UPDATE trabajadores t
-SET tipo_trabajador = (
-    SELECT 'Jefe de Departamento'
-)
-WHERE codigo_jefe IS NULL
-  AND DNI LIKE '9000000%';
-  
--- -----------------------------------------------------
--- 2.4: UPDATE con JOIN Múltiple, a varias tablas (miguel)
--- -----------------------------------------------------
-                
-UPDATE usuario u
-JOIN perfil p ON u.DNI = p.DNI_usuario
-SET u.tipo = 'VIP'
-WHERE p.nick = 'JuanMain';
-
--- ------------------------------------------------------
+-- UPDATE reseña SET puntuacion = 9 WHERE comentario = 'Muy entretenida'; -- Usando columna comentario al no haber una PK 
 -- 3.1 DELETE Simple. Elimiinar un registro específico
--- ------------------------------------------------------
-
-INSERT INTO usuario VALUES ('00000000A', NULL, NULL, NULL, NULL);
-DELETE FROM usuario WHERE DNI = '00000000A';
-
--- ------------------------------------------------------
--- 3.2: DELETE con Subconsulta (stephano)
--- ------------------------------------------------------
-
-DELETE FROM reseña
-WHERE id_contenido IN (
-    SELECT id_contenido
-    FROM contenido
-    WHERE tipo = 'Película'
-);
-
--- ------------------------------------------------------------------------------------
--- 3.3 DELETE CON JOIN 
--- ------------------------------------------------------------------------------------
-
-DELETE r
-FROM reseña r
-JOIN perfil p ON r.codigo_perfil = p.codigo_perfil
-WHERE r.id_contenido = 101;
-
--- -----------------------------------------------------
--- 3.4: DELETE Condicional con lógica compleja (miguel)
--- -----------------------------------------------------
-
-DELETE u
-FROM usuario u
-JOIN perfil p ON u.DNI = p.DNI_usuario
-JOIN compra c ON p.codigo_perfil = c.codigo_perfil
-JOIN metodo_de_pago m ON c.codigo_pago = m.codigo_pago
-WHERE m.tipo_pago = 'PayPal';
-
-
--- ------------------------------------------------------------------------------------
+-- INSERT INTO usuario VALUES ('00000000A', NULL, NULL, NULL, NULL);
+-- DELETE FROM usuario WHERE DNI = '00000000A';
 -- 3.5 DELETE en Cascada Simulado. Eliminar registros respetando integridad referencial
--- ------------------------------------------------------------------------------------
+-- DELETE FROM reseña WHERE codigo_perfil = 1;
+-- DELETE FROM perfil WHERE codigo_perfil = 1;
 
-DELETE FROM reseña WHERE codigo_perfil = 1;
-DELETE FROM perfil WHERE codigo_perfil = 1;
+-- ----------------------------------------
+-- 3.Operadores Lógicos
+-- ----------------------------------------
+SELECT * FROM usuario WHERE tipo = 'Básico' AND DNI = '11223344C';
 
--- ------------------------------------------------------------------------------------
--- 4.1: Transacción Completa. : Operación atómica con múltiples DML (stephano)
--- ------------------------------------------------------------------------------------
+-- ----------------------------------------
+-- 7.DISTINCT
+-- ----------------------------------------
+SELECT DISTINCT codigo_productora FROM contrata;
 
-START TRANSACTION;
--- 1. Insertamos un nuevo usuario
-INSERT INTO usuario VALUES 
-('55555555Z', 'Mario', 'Torres', 'mario@gmail.com', '600999888', 'Premium');
--- 2. Creamos el perfil para el usuario
-INSERT INTO perfil VALUES
-(5, 'MarioMain', '55555555Z');
--- 3. Registramos su compra
-INSERT INTO compra VALUES
-(100, 1, 5);
--- Comiteamos los cambios
-COMMIT;
+-- ----------------------------------------
+-- 11.INNER JOIN Básico (dos tablas)
+-- ----------------------------------------
+SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario;
 
+-- ----------------------------------------
+-- 15.SELF JOIN (tabla consigo misma)
+-- ----------------------------------------
+SELECT * FROM trabajadores t INNER JOIN trabajadores j ON  t.DNI_jefe = j.DNI WHERE j.DNI_jefe IS NULL;
 
+-- ----------------------------------------
+-- 19.JOIN con Múltiples Condiciones
+-- ----------------------------------------
+SELECT * FROM perfil p INNER JOIN usuario u ON u.DNI = p.DNI_usuario WHERE u.DNI = '12345678A' AND p.nick = 'JuanKids';
+
+-- ----------------------------------------
+-- 23.Subconsulta con IN
+-- ----------------------------------------
+SELECT * FROM perfil WHERE DNI_usuario IN (SELECT DNI FROM usuario WHERE nombre = 'Juan');
+
+-- ----------------------------------------
+-- 27.Subconsulta en FROM (Tabla Derivada)
+-- ----------------------------------------
+SELECT * FROM contrata c INNER JOIN (SELECT * FROM productora WHERE codigo_productora = 1) p; 
