@@ -16,7 +16,7 @@ USE streamingdb;
 CREATE TABLE productora (
   codigo_productora INT NOT NULL,
   nombre_productora VARCHAR(100) NOT NULL,
-  premios TEXT,
+  premios VARCHAR(255),
   PRIMARY KEY (codigo_productora)
 ) ENGINE=InnoDB;
 
@@ -44,6 +44,8 @@ CREATE TABLE contenido (
 
 CREATE TABLE series (
   id_contenido INT NOT NULL,
+  numero_temporadas INT NOT NULL,
+  en_emision BOOLEAN NOT NULL,
   PRIMARY KEY (id_contenido),
   FOREIGN KEY (id_contenido)
     REFERENCES contenido(id_contenido)
@@ -70,12 +72,11 @@ CREATE TABLE peliculas (
 -- -----------------------------------------------------
 
 CREATE TABLE capitulos (
-  codigo_capitulo INT NOT NULL AUTO_INCREMENT,
+  id_serie INT NOT NULL,
   temporada INT NOT NULL,
   numero INT NOT NULL,
-  duracion VARCHAR(45) NOT NULL,
-  id_serie INT NOT NULL,
-  PRIMARY KEY (codigo_capitulo),
+  duracion SMALLINT NOT NULL,
+  PRIMARY KEY (id_serie, temporada, numero),
   FOREIGN KEY (id_serie)
     REFERENCES series(id_contenido)
     ON DELETE CASCADE
@@ -103,7 +104,7 @@ CREATE TABLE usuario (
   apellidos VARCHAR(50) NOT NULL,
   correo VARCHAR(80) NOT NULL,
   telefono VARCHAR(20) NOT NULL,
-  tipo VARCHAR(30) NOT NULL,
+  tipo ENUM('Básico', 'Estándar', 'Premium') NOT NULL,
   PRIMARY KEY (DNI)
 ) ENGINE=InnoDB;
 
@@ -188,7 +189,7 @@ CREATE TABLE reseña (
   codigo_perfil INT NOT NULL,
   id_contenido INT NOT NULL,
   fecha DATE NOT NULL,
-  puntuacion INT NOT NULL,
+  puntuacion TINYINT NOT NULL,
   comentario TEXT,
   PRIMARY KEY (codigo_perfil, id_contenido),
   FOREIGN KEY (codigo_perfil)
@@ -272,8 +273,8 @@ INSERT INTO contenido VALUES
 -- -----------------------------------------------------
 
 INSERT INTO series VALUES
-(101),
-(103);
+(101,5,true),
+(103,3,false);
 
 -- -----------------------------------------------------
 -- PELICULAS
@@ -288,10 +289,10 @@ INSERT INTO peliculas VALUES
 -- -----------------------------------------------------
 
 INSERT INTO capitulos (temporada, numero, duracion, id_serie) VALUES
-(1, 1, '50 min', 101),
-(1, 2, '48 min', 101),
-(1, 1, '60 min', 103),
-(1, 2, '58 min', 103);
+(1, 1, 50, 101),
+(1, 2, 48, 101),
+(1, 1, 60, 103),
+(1, 2, 58, 103);
 
 -- -----------------------------------------------------
 -- METODO DE PAGO
