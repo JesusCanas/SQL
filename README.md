@@ -54,37 +54,33 @@ afectarás
 - 28: Subconsulta con ALL (stephano)
 - 29: Subconsulta con ANY/SOME (jesus)
 - 30: Subconsultas Anidadas (miguel)
-# CORREGIR
-Revisión del modelo:
+  # PROGRAMAR EN BASE DE DATOS
+  1. Procedimientos almacenados
+Implementar al menos 3 procedimientos almacenados que cubran operaciones habituales de su base de
+datos:
+- Un procedimiento de inserción con validación de datos (jesus)
+- Un procedimiento de consulta con parámetros de filtrado  (aron)
+- Un procedimiento de actualización o eliminación con control de errores  (stephano)
+2. Funciones
+Implementar al menos 2 funciones que devuelvan un valor calculado a partir de los datos, por ejemplo:
+- Calcular un total, un promedio o un descuento  (miguel)
+- Comprobar si un valor cumple una condición de negocio  (jesus)
+3. Triggers
+Implementar al menos 3 triggers que automaticen acciones sobre la base de datos:
+Un trigger de tipo INSERT para registrar o validar inserciones  (aron)
+Un trigger de tipo UPDATE para controlar modificaciones  (stephano)
+Un trigger de tipo DELETE para proteger o registrar eliminaciones (miguel)
+Control de errores
+En todos los elementos anteriores se debe aplicar:
+- Uso de SIGNAL SQLSTATE para lanzar errores personalizados (jesus)
+- Validación de datos antes de operar (valores nulos, rangos, existencia de registros)  (aron)
+- Manejo de excepciones con DECLARE ... HANDLER (stephano)
+Tabla de log 
+Como requisito transversal, se debe crear una tabla de auditoría donde los triggers registren
+automáticamente las operaciones más relevantes, incluyendo: 
+• La tabla afectada
+• El tipo de operación
+• Una descripción del cambio
+• La fecha y hora de la transacción
 
-   - Revisar la clave primaria de la tabla capítulos, 
 
-   - Añadir columnas a la tabla serie para justificar su existencia. 
-
-  - Revisar la clave primaria de la tabla contrata, ¿no sería conveniente utilizar el código de trabajador? 
-
-  - Al tipo de usuario, ¿se le podrían limitar los valores a incluir con un tipo de datos enum o un check? 
-
-  - ¿Podéis ajustar más el tipo de dato de la columna puntuación de reseña? 
-
-  - Revisar el tipo de datos utilizado para almacenar los premios.
-
-Revisión Consultas:
-
-   - La consulta 5 devuelve que sólo hay un contenido de género "Terror" y la consulta 6 que tiene 2. Revisar. 
-
-  - Revisar si la consulta 14 devuelve lo que se indica en el enunciado para todos los casos posibles. 
-
-  - Revisar si la consulta 15 retorna lo que se indica en el enunciado. 
-
-  - Complicar más la consulta 19 
-
-  -  Consulta 20 marcar las que son de cada tipo. 
-
-  - Complicar más la consulta 21
-
-  - Revisar consulta 22. Pueden existir muchos "Juan" en la tabla usuarios.
-
-  - Incorrecta la consulta 27
-
-  - Revisar definición de la consulta 29. 
