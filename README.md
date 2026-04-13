@@ -72,9 +72,9 @@ Un trigger de tipo UPDATE para controlar modificaciones  (stephano)
 Un trigger de tipo DELETE para proteger o registrar eliminaciones (miguel)
 Control de errores
 En todos los elementos anteriores se debe aplicar:
-- Uso de SIGNAL SQLSTATE para lanzar errores personalizados (jesus)
-- Validación de datos antes de operar (valores nulos, rangos, existencia de registros)  (aron)
-- Manejo de excepciones con DECLARE ... HANDLER (stephano)
+- Uso de SIGNAL SQLSTATE para lanzar errores personalizados 
+- Validación de datos antes de operar (valores nulos, rangos, existencia de registros) 
+- Manejo de excepciones con DECLARE ... HANDLER
 Tabla de log 
 Como requisito transversal, se debe crear una tabla de auditoría donde los triggers registren
 automáticamente las operaciones más relevantes, incluyendo: 
