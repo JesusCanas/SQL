@@ -75,7 +75,8 @@ En todos los elementos anteriores se debe aplicar:
 - Uso de SIGNAL SQLSTATE para lanzar errores personalizados 
 - Validación de datos antes de operar (valores nulos, rangos, existencia de registros) 
 - Manejo de excepciones con DECLARE ... HANDLER
-Tabla de log 
+
+-Tabla de log 
 Como requisito transversal, se debe crear una tabla de auditoría donde los triggers registren
 automáticamente las operaciones más relevantes, incluyendo: 
 • La tabla afectada
