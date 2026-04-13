@@ -201,6 +201,16 @@ CREATE TABLE reseña (
     ON DELETE CASCADE
     ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+-- -----------------------------------------------------
+-- TABLA LOG 
+-- -----------------------------------------------------
+CREATE TABLE log (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tabla VARCHAR(50),
+    operacion VARCHAR(10),
+    descripcion VARCHAR(255),
+    fecha DATETIME
+);
 
 -- -----------------------------------------------------
 -- CREACION DE ROLES
