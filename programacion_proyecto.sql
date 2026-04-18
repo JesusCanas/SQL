@@ -1,5 +1,41 @@
 USE streamingdb;
+-- ---------------------------------------------------------------
+-- Un procedimiento de comprobacion de validacion de datos 
+-- ---------------------------------------------------------------
+DELIMITER //
 
+CREATE PROCEDURE pr_insertar_usuario_jesus(
+    IN p_dni VARCHAR(15),
+    IN p_nombre VARCHAR(50),
+    IN p_apellidos VARCHAR(50),
+    IN p_correo VARCHAR(80),
+    IN p_telefono VARCHAR(20),
+    IN p_tipo ENUM('Básico', 'Estándar', 'Premium'),
+    OUT p_mensaje VARCHAR(100)
+)
+BEGIN
+    IF p_dni IS NULL OR p_dni = '' OR p_nombre IS NULL OR p_nombre = '' THEN
+        SET p_mensaje = 'Error: Campos obligatorios vacios';
+    ELSE
+        INSERT INTO usuario (DNI, nombre, apellidos, correo, telefono, tipo)
+        VALUES (p_dni, p_nombre, p_apellidos, p_correo, p_telefono, p_tipo);
+        
+        INSERT INTO log (tabla, operacion, descripcion, fecha)
+        VALUES ('usuario', 'INSERT', CONCAT('Registro: ', p_nombre), NOW());
+        
+        SET p_mensaje = 'usuario registrado con exito';
+    END IF;
+    
+    SELECT p_mensaje AS Resultado;
+END //
+
+DELIMITER ;
+CALL pr_insertar_usuario_jesus('99887766Z', 'Jesus', 'García', 'jesus@mail.com', '600111222', 'Premium', @resultado); -- Para probar un registro exitoso
+SELECT @resultado;
+
+-- Para probar el error (dejando el nombre vacío):
+CALL pr_insertar_usuario_jesus('11223344K', '', 'Sanz', 'test@mail.com', '600000000', 'Básico', @resultado); -- Para probar que pasa si poner usuario en blaco
+SELECT @resultado;
 -- ---------------------------------------------------------------
 -- Un procedimiento de consulta con parámetros de filtrado
 -- ---------------------------------------------------------------
