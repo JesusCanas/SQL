@@ -133,3 +133,51 @@ DELIMITER ;
 INSERT INTO usuario VALUES('1234', 'Estefanía', 'Dolores', 'estefania@gmail.com', '606060606', 'Básico'); -- Error de formato incorrecto de DNI
 INSERT INTO usuario VALUES('12345678T', 'Estefanía', 'Dolores', 'estefania@gmail.com', '606066', 'Básico'); -- Error de formato incorrecto de numero de telefono
 INSERT INTO usuario VALUES('12345678T', 'Estefanía', 'Dolores', 'estefania@gmail.com', '606060606', 'Básico'); -- Insert correcto
+
+-- ---------------------------------------------------------------
+-- Funcion que devuelve un promedio de puntuaciones de un contenido
+-- ---------------------------------------------------------------
+DROP FUNCTION IF EXISTS promedio_puntuacion;
+DELIMITER //
+CREATE FUNCTION promedio_puntuacion(contenido_id INT)
+RETURNS DECIMAL(4,2)
+DETERMINISTIC
+BEGIN
+    DECLARE promedio DECIMAL(4,2); -- declaramos la variable que devolveremos
+	DECLARE existe INT; -- declaramos una variable de error
+
+    -- Handler de error
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error al calcular el promedio';
+    END;
+
+    -- Validar si es null
+    IF contenido_id IS NULL THEN 
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El id_contenido no puede ser NULL';
+    END IF;
+
+    -- Validar que exista el contenido usando un select con id_contenido
+    SELECT COUNT(*) INTO existe
+    FROM contenido
+    WHERE id_contenido = contenido_id;
+
+    IF existe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El contenido no existe';
+    END IF;
+    
+    -- select para realiza el promedio de puntuaciones solo si 
+    -- las comprobaciones anteriores resultaron bien
+    SELECT AVG(puntuacion)
+    INTO promedio
+    FROM reseña
+    WHERE id_contenido = contenido_id;
+
+    RETURN promedio; -- devuelve el promedio
+END //
+DELIMITER ;
+
+SELECT promedio_puntuacion(101);
