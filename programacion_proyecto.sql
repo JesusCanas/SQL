@@ -78,7 +78,38 @@ CALL filtrar_resenias(1, 8, 10); -- Error de reseña no encontrada
 CALL filtrar_resenias(100, 11, 10); -- Error de minimo > maximo
 CALL filtrar_resenias(100, -1, 11); -- Error de fuera de rango
 CALL filtrar_resenias(100, 8, 10); -- Llamada correcta
+-- ---------------------------------------------------------------
+-- Funcion de negocio
+-- ----------------------------------------------------------------
+DELIMITER //
 
+CREATE FUNCTION fn_validar_rentabilidad(p_id_contenido INT) 
+RETURNS VARCHAR(20)
+DETERMINISTIC
+BEGIN
+    DECLARE v_resultado VARCHAR(20);
+    DECLARE v_genero VARCHAR(45);
+    DECLARE v_premios VARCHAR(255);
+
+    SELECT c.genero, p.premios INTO v_genero, v_premios
+    FROM contenido c
+    JOIN productora p ON c.codigo_productora = p.codigo_productora
+    WHERE c.id_contenido = p_id_contenido;
+
+    IF v_premios IS NOT NULL AND (v_genero = 'Ciencia Ficción' OR v_genero = 'Terror') THEN
+        SET v_resultado = 'ALTA RENTABILIDAD';
+    ELSEIF v_premios IS NOT NULL THEN
+        SET v_resultado = 'POTENCIAL';
+    ELSE
+        SET v_resultado = 'ESTÁNDAR';
+    END IF;
+
+    RETURN v_resultado;
+END //
+
+DELIMITER ;
+SELECT nombre_contenido, genero, fn_validar_rentabilidad(id_contenido) AS analisis
+FROM contenido;
 -- ---------------------------------------------------------------
 -- Un trigger de tipo INSERT para registrar o validar inserciones
 -- ---------------------------------------------------------------
