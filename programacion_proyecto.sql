@@ -181,3 +181,31 @@ END //
 DELIMITER ;
 
 SELECT promedio_puntuacion(101);
+
+-- ---------------------------------------------------------------
+-- Trigger para registrar al borrar un usuario
+-- ---------------------------------------------------------------
+
+DROP TRIGGER IF EXISTS registrar_borrar_usuario;
+DELIMITER //
+CREATE TRIGGER registrar_borrar_usuario
+BEFORE DELETE ON usuario
+FOR EACH ROW
+BEGIN
+	-- inserta en log, las columnas: tabla, operacion, descripcion, fecha
+    -- como este trigger modifica la tabla usuario, y comprueba los delete
+    -- las primeras 2 columnas las escribimos a mano
+    -- en la descripcion añadimos todo lo que tenia antes usuario
+    -- y en la ultima ponemos la fecha del delete
+    INSERT INTO log (tabla, operacion, descripcion, fecha)
+    VALUES ('usuario', 'DELETE', CONCAT('Se elimina usuario: ', OLD.DNI, 
+								' ', OLD.nombre, ' ', OLD.apellidos,
+									' ', OLD.correo), NOW());
+END //
+
+DELIMITER ;
+
+delete from usuario
+WHERE DNI = '12345678A';
+
+select * from log;
