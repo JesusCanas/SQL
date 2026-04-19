@@ -78,6 +78,41 @@ CALL filtrar_resenias(1, 8, 10); -- Error de reseña no encontrada
 CALL filtrar_resenias(100, 11, 10); -- Error de minimo > maximo
 CALL filtrar_resenias(100, -1, 11); -- Error de fuera de rango
 CALL filtrar_resenias(100, 8, 10); -- Llamada correcta
+
+-- -------------------------------------
+-- Procedimiento Almacenado (Stephano)
+-- -------------------------------------
+
+DROP PROCEDURE IF EXISTS sp_actualizar_tipo_usuario;
+DELIMITER //
+
+CREATE PROCEDURE sp_actualizar_tipo_usuario(IN p_dni VARCHAR(15), IN p_nuevo_tipo VARCHAR(20))
+BEGIN
+    -- Declaramos el manejador para errores de SQL
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error interno al actualizar el usuario.';
+    END;
+    -- 1. Validación de datos nulos
+    IF p_dni IS NULL OR p_nuevo_tipo IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El DNI y el tipo no pueden ser nulos.';
+    END IF;
+    -- 2. Validación de existencia
+    IF (SELECT COUNT(*) FROM usuario WHERE DNI = p_dni) = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El usuario con ese DNI no existe.';
+    END IF;
+    -- 3. Validación de valores permitidos (Regla de negocio)
+    IF p_nuevo_tipo NOT IN ('Básico', 'Estándar', 'Premium') THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo de usuario no válido. Use: Básico, Estándar o Premium.';
+    END IF;
+    -- Ejecución de la actualización
+    UPDATE usuario 
+    SET tipo = p_nuevo_tipo 
+    WHERE DNI = p_dni;
+END //
+
+DELIMITER ;
+
 -- ---------------------------------------------------------------
 -- Funcion de negocio
 -- ----------------------------------------------------------------
@@ -181,6 +216,34 @@ END //
 DELIMITER ;
 
 SELECT promedio_puntuacion(101);
+
+-- Trigger de tipo UPDATE para controlar modificaciones y registrar en el log.
+-- Este trigger se dispara cada vez que alguien cambia la información de un contenido 
+-- (como el título o el género) y guarda el rastro en la tabla log.
+
+-- ------------------------------------------------------------------------------
+-- Trigger de tipo UPDATE para controlar modificaciones y registrar en el log.
+-- ------------------------------------------------------------------------------
+
+DROP TRIGGER IF EXISTS tr_audit_update_contenido;
+
+DELIMITER //
+
+CREATE TRIGGER tr_audit_update_contenido
+AFTER UPDATE ON contenido
+FOR EACH ROW
+BEGIN
+    -- Insertamos el movimiento en la tabla de auditoría (log)
+    INSERT INTO log (tabla, operacion, descripcion, fecha)
+    VALUES (
+        'contenido', 
+        'UPDATE', 
+        CONCAT('Se cambió el título de "', OLD.nombre_contenido, '" a "', NEW.nombre_contenido, '"'), 
+        NOW()
+    );
+END //
+
+DELIMITER ;
 
 -- ---------------------------------------------------------------
 -- Trigger para registrar al borrar un usuario
